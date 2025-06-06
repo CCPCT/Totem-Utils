@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "totemutils",
+  "version": "${version}",
+  "name": "Totem Utils",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/cyrus/custom self totem sound"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "CCPCT.TotemUtils.client.TotemUtilsClient"
+    ],
+    "modmenu": [
+      "CCPCT.TotemUtils.ModMenu.ModMenu"
+    ]
+  },
+  "mixins": [
+    "TotemUtils.mixin.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
