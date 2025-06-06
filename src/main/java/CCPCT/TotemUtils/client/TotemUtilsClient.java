@@ -1,4 +1,5 @@
 package CCPCT.TotemUtils.client;
+
 import static CCPCT.TotemUtils.config.ModConfig.load;
 import net.fabricmc.api.ClientModInitializer;
 
