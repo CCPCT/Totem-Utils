@@ -1,6 +1,6 @@
 Minecraft mod to optimise totem experience in pvp
 Options:
-- change self totem pop sound to shield break sound
+- customise self totem pop sound
 - hot key to equip totem
 - option to autototem (not recommanded in pvp servers)
 

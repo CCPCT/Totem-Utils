@@ -65,7 +65,7 @@ public class onTotemPopMixin {
         }
         if (ModConfig.get().customSound) {
             totemlogic.stopTotemSound();
-            totemlogic.playShieldBreakSound();
+            totemlogic.playCustomSound();
         }
     }
 }

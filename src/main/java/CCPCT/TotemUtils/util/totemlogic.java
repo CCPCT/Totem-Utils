@@ -1,8 +1,8 @@
 package CCPCT.TotemUtils.util;
 
+import CCPCT.TotemUtils.config.ModConfig;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -13,13 +13,12 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Identifier;
 import net.minecraft.sound.SoundCategory;
-
 import org.spongepowered.asm.mixin.Unique;
-import net.minecraft.sound.SoundEvents;
 
 
 import java.util.ArrayList;
@@ -126,12 +125,10 @@ public class totemlogic {
             );
         }
     }
-    public static void playShieldBreakSound() {
+    public static void playCustomSound() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player != null) {
-            PositionedSoundInstance positionedSound = PositionedSoundInstance.master(SoundEvents.ITEM_SHIELD_BREAK,1.2f,3.0f);
-            // Using built-in SoundEvents for shield break
-            client.getSoundManager().play(positionedSound);
+            client.player.playSound(SoundEvent.of(Identifier.of(ModConfig.get().customSoundName)),ModConfig.get().customSoundVolume,1.0f);
         }
     }
 }

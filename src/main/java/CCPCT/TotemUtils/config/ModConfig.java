@@ -9,8 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ModConfig {
-    public boolean autoTotem;
-    public boolean customSound;
+    public boolean autoTotem = false;
+    public boolean customSound = true;
+    public String customSoundName = "minecraft:item.shield.break";
+    public Float customSoundVolume = 1.0f;
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
             .getConfigDir().resolve("totemutils-config.json");
