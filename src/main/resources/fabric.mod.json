@@ -8,7 +8,7 @@
   "contact": {
     "repo": "https://github.com/CCPCT/TotemUtils"
   },
-  "license": "All-Rights-Reserved",
+  "license": "GPL-3.0-or-later",
   "icon": "assets/icon.png",
   "environment": "client",
   "entrypoints": {
@@ -27,7 +27,7 @@
     "fabric": "*",
     "minecraft": "${minecraft_version}",
     "java": ">=21",
-    "modmenu": ">=13.0.3",
-    "cloth-config": ">=17.0.144"
+    "modmenu": "*",
+    "cloth-config": "*"
   }
 }
