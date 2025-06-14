@@ -10,9 +10,19 @@ import java.nio.file.Path;
 
 public class ModConfig {
     public boolean autoTotem = false;
+    public boolean chatfeedback = true;
+
     public boolean customSound = true;
     public String customSoundName = "minecraft:item.shield.break";
     public Float customSoundVolume = 1.0f;
+
+    public boolean totemPopScreen = true;
+    public int totemPopScreenColour = 0xFFFF0000;
+    public int totemPopScreenAlpha = 255;
+    public int totemPopScreenDuration = 20;
+    public int totemPopScreenWidth = 100;
+
+
 
     private static final Path CONFIG_PATH = FabricLoader.getInstance()
             .getConfigDir().resolve("totemutils-config.json");

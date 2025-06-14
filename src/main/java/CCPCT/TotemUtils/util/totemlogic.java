@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.ArrayList;
 
 public class totemlogic {
+    public static boolean overlayactive = false;
     public static ArrayList<Packet<?>> packetsToSend = new ArrayList<>();
     public static ArrayList<Packet<?>> getPacketsToSend(){
         return packetsToSend;
@@ -38,26 +39,33 @@ public class totemlogic {
 
         if (player == null) return;
 
-        if (!force && player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING) {
-            IngameChat.sendColourChat("You already have a totem.", "white");
+        if (!force && totemOnOffhand()) {
+            IngameChat.sendColourChat("You already have a totem.", "yellow");
             return;
         }
 
         IngameChat.sendColourChat("Refilling totem!", "green");
-        int spareTotemSlot = getSlotWithSpareTotem(player.getInventory());
+        int spareTotemSlot = getSlotWithSpareTotem();
         if (spareTotemSlot == -1) {
             IngameChat.sendColourChat("No totem!", "red");
             return;
         }
-        moveTotemToOffhand(player, spareTotemSlot);
+        moveTotemToOffhand();
     }
 
+    public static boolean totemOnOffhand(){
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
+        return player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING;
+    }
 
     @Unique
-    private static int getSlotWithSpareTotem(PlayerInventory inventory) {
+    private static int getSlotWithSpareTotem() {
         //prefer take from inventory
-        for (int i = 9; i < inventory.main.size(); i++) {
-            ItemStack stack = inventory.main.get(i);
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
+        for (int i = 9; i < player.getInventory().main.size(); i++) {
+            ItemStack stack = player.getInventory().main.get(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
                 return i;
@@ -65,7 +73,7 @@ public class totemlogic {
         }
         //take from hotbar
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = inventory.main.get(i);
+            ItemStack stack = player.getInventory().main.get(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
                 return i;
@@ -75,8 +83,11 @@ public class totemlogic {
         return -1;
     }
 
-    private static void moveTotemToOffhand(PlayerEntity player, int fromSlot) {
+    private static void moveTotemToOffhand() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
         ScreenHandler screenHandler = player.currentScreenHandler;
+        int fromSlot = getSlotWithSpareTotem();
         PlayerInventory inventory = player.getInventory();
         ItemStack totemStack = inventory.getStack(fromSlot).copy();
 
@@ -132,4 +143,3 @@ public class totemlogic {
         }
     }
 }
-
