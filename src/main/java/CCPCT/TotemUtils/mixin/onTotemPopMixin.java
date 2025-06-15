@@ -34,7 +34,7 @@ public class onTotemPopMixin {
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
         if (totemlogic.overlayactive){
-            if (overlaytickleft <= 0 || (totemlogic.totemOnOffhand() && 5<=ModConfig.get().totemPopScreenDuration-overlaytickleft)){
+            if (overlaytickleft <= 0 || (totemlogic.totemOnOffhand() && 5<=ModConfig.get().totemPopScreenDuration*20-overlaytickleft)){
                 totemlogic.overlayactive = false;
             } else {
                 overlaytickleft--;
