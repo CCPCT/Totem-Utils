@@ -40,19 +40,15 @@ public class TotemUtilsClient implements ClientModInitializer {
 
         // Register client tick listener
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (swapTotemKey.wasPressed()) {
-                // Action to perform when key is pressed
+            if (swapTotemKey.wasPressed()) {
+                // swap totem
                 IngameChat.sendChat("Switching totem");
-                totemlogic.refillTotem(false);
-                // Example: trigger your own function here
+                totemlogic.refillTotem();
             }
-        });
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (configScreenKey.wasPressed()) {
-                // Action to perform when key is pressed
+            if (configScreenKey.wasPressed()) {
+                // open config
                 MinecraftClient.getInstance().setScreen(configScreen.getConfigScreen(MinecraftClient.getInstance().currentScreen));
-                // Example: trigger your own function here
             }
         });
     }

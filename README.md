@@ -4,4 +4,5 @@ Options:
 - hot key to equip totem
 - option to autototem (not recommanded in pvp servers)
 
-first minecraft mod, first time learn java :3
+To download newest version, either visit modrinth: https://modrinth.com/mod/totemutils
+or go to release: https://github.com/CCPCT/Totem-Utils/releases

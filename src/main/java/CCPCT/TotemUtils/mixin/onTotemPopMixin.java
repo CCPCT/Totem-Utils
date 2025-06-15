@@ -28,6 +28,8 @@ public class onTotemPopMixin {
 
     @Unique
     public int overlaytickleft = 0;
+    @Unique
+    public int counttickleft = 0;
 
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
@@ -38,10 +40,25 @@ public class onTotemPopMixin {
                 overlaytickleft--;
             }
         }
+        if (ModConfig.get().totemCountTime<0){
+            totemlogic.totemCountActive = true;
+            totemlogic.totemCountValue = totemlogic.getTotemCount();
+        } else if (totemlogic.totemCountActive){
+            if (counttickleft <= 0){
+                totemlogic.totemCountActive = false;
+            } else {
+                counttickleft--;
+            }
+        }
+
 
         ArrayList<Packet<?>> packetsToSend = totemlogic.getPacketsToSend();
         if (packetsToSend.isEmpty())
             return;
+        if (packetsToSend.getFirst() == null){
+            totemlogic.popPacketsToSend();
+            return;
+        }
 
         ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
         if (networkHandler == null)
@@ -65,7 +82,7 @@ public class onTotemPopMixin {
 
         // auto totem
         if (ModConfig.get().autoTotem) {
-            totemlogic.refillTotem(true);
+            totemlogic.refillTotem();
         } else {
             IngameChat.sendColourChat("You Popped!", "red");
         }
@@ -78,6 +95,12 @@ public class onTotemPopMixin {
         if (ModConfig.get().totemPopScreen) {
             overlaytickleft = ModConfig.get().totemPopScreenDuration*20;
             totemlogic.overlayactive = true;
+        }
+
+        // totem count
+        if (ModConfig.get().totemCountTime>0){
+            totemlogic.totemCountActive = true;
+            counttickleft = ModConfig.get().totemCountTime * 20;
         }
     }
 }

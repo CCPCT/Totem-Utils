@@ -16,8 +16,8 @@ public class RenderOverlay {
     public static class InGameHudMixin {
         @Inject(method = "render", at = @At("TAIL"))
         private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+            MinecraftClient client = MinecraftClient.getInstance();
             if (ModConfig.get().totemPopScreen && totemlogic.overlayactive) {
-                MinecraftClient client = MinecraftClient.getInstance();
                 int width = client.getWindow().getScaledWidth();
                 int height = client.getWindow().getScaledHeight();
                 int argb = (ModConfig.get().totemPopScreenAlpha << 24) | ModConfig.get().totemPopScreenColour;
@@ -36,7 +36,10 @@ public class RenderOverlay {
 
                 // Draw right of hole to end of screen
                 context.fill(centerX + holeWidth / 2, centerY - holeHeight / 2, width, centerY + holeHeight / 2, argb);
-
+            }
+            if (totemlogic.totemCountActive || ModConfig.get().totemCountTime == -1){
+                int argb = (ModConfig.get().totemCountAlpha << 24) | ModConfig.get().totemCountColour;
+                context.drawText(client.textRenderer, String.valueOf(totemlogic.getTotemCount()), ModConfig.get().totemCountx, ModConfig.get().totemCounty, argb, true);
             }
         }
     }
