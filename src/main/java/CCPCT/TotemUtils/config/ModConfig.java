@@ -17,10 +17,16 @@ public class ModConfig {
     public Float customSoundVolume = 1.0f;
 
     public boolean totemPopScreen = true;
-    public int totemPopScreenColour = 0xFFFF0000;
+    public int totemPopScreenColour = 0xFF0000;
     public int totemPopScreenAlpha = 255;
     public int totemPopScreenDuration = 20;
     public int totemPopScreenWidth = 100;
+
+    public int totemCountTime = 0;
+    public int totemCountx = 10;
+    public int totemCounty = 10;
+    public int totemCountColour = 0xFFFFFF;
+    public int totemCountAlpha = 255;
 
 
 

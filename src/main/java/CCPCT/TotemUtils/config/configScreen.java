@@ -22,6 +22,7 @@ public class configScreen extends Screen {
         ConfigCategory generalTab = builder.getOrCreateCategory(Text.literal("General"));
         ConfigCategory soundTab = builder.getOrCreateCategory(Text.literal("Sound"));
         ConfigCategory screenTab = builder.getOrCreateCategory(Text.literal("Screen"));
+        ConfigCategory countTab = builder.getOrCreateCategory(Text.literal("Totem Counter"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
@@ -44,7 +45,7 @@ public class configScreen extends Screen {
 
 
         // Custom Sound toggle
-        soundTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Custom Sound"),ModConfig.get().customSound)
+        soundTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enable Custom Sound"),ModConfig.get().customSound)
                 .setDefaultValue(true)
                 .setTooltip(Text.literal("Enable custom sound when your totem pops (other players unaffected)"))
                 .setSaveConsumer(newValue -> {
@@ -71,7 +72,7 @@ public class configScreen extends Screen {
             .build());
 
         //screen tab
-        screenTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Totem Pop Screen"),ModConfig.get().totemPopScreen)
+        screenTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enable Overlay"),ModConfig.get().totemPopScreen)
             .setDefaultValue(false)
             .setTooltip(Text.literal("Render screen vintage overlay effect when popped totem"))
             .setSaveConsumer(newValue -> {
@@ -80,7 +81,7 @@ public class configScreen extends Screen {
             .build());
 
         screenTab.addEntry(builder.entryBuilder()
-                .startColorField(Text.literal("Overlay Color"), ModConfig.get().totemPopScreenColour)
+                .startColorField(Text.literal("Color"), ModConfig.get().totemPopScreenColour)
                 .setDefaultValue(0xFFFF00)
                 .setTooltip(Text.literal("Colour of overlay effect"))
                 .setSaveConsumer(newValue -> {
@@ -88,8 +89,8 @@ public class configScreen extends Screen {
                 })
                 .build());
 
-        screenTab.addEntry(entryBuilder.startIntField(Text.literal("Overlay Alpha"), ModConfig.get().totemPopScreenAlpha)
-                .setTooltip(Text.literal("Opacity of overlay effect: 0 = fully transparent"))
+        screenTab.addEntry(entryBuilder.startIntField(Text.literal("Alpha"), ModConfig.get().totemPopScreenAlpha)
+                .setTooltip(Text.literal("Alpha (non-transparency/Opacity) of overlay"))
                 .setDefaultValue(255)
                 .setMin(0).setMax(255)
                 .setSaveConsumer(newValue -> {
@@ -110,6 +111,49 @@ public class configScreen extends Screen {
                 .setDefaultValue(100)
                 .setSaveConsumer(newValue -> {
                     ModConfig.get().totemPopScreenWidth = newValue;
+                })
+                .build());
+
+        //enabled size pos colour
+        countTab.addEntry(entryBuilder.startIntField(Text.literal("Seconds to display"), ModConfig.get().totemCountTime)
+                .setTooltip(Text.literal("-1=always render; 0=disable, positive integer=time to display after pop, in seconds"))
+                .setDefaultValue(0)
+                .setSaveConsumer(newValue -> {
+                    ModConfig.get().totemCountTime = newValue;
+                })
+                .build());
+
+        countTab.addEntry(builder.entryBuilder()
+                .startColorField(Text.literal("Text Color"), ModConfig.get().totemCountColour)
+                .setDefaultValue(0x000000)
+                .setTooltip(Text.literal("Colour of totem count text"))
+                .setSaveConsumer(newValue -> {
+                    ModConfig.get().totemCountColour = newValue;
+                })
+                .build());
+
+        countTab.addEntry(entryBuilder.startIntField(Text.literal("Alpha"), ModConfig.get().totemCountAlpha)
+                .setTooltip(Text.literal("Alpha (non-transparency/Opacity) of totem count text"))
+                .setDefaultValue(255)
+                .setMin(0).setMax(255)
+                .setSaveConsumer(newValue -> {
+                    ModConfig.get().totemCountAlpha = newValue;
+                })
+                .build());
+
+        countTab.addEntry(entryBuilder.startIntField(Text.literal("X position"), ModConfig.get().totemCountx)
+                .setTooltip(Text.literal("how many pixels from left of screen to start of text"))
+                .setDefaultValue(10)
+                .setSaveConsumer(newValue -> {
+                    ModConfig.get().totemCountx = newValue;
+                })
+                .build());
+
+        countTab.addEntry(entryBuilder.startIntField(Text.literal("Y position"), ModConfig.get().totemCounty)
+                .setTooltip(Text.literal("how many pixels from top of screen to start of text"))
+                .setDefaultValue(10)
+                .setSaveConsumer(newValue -> {
+                    ModConfig.get().totemCounty = newValue;
                 })
                 .build());
 

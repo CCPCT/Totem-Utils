@@ -25,6 +25,8 @@ import java.util.ArrayList;
 
 public class totemlogic {
     public static boolean overlayactive = false;
+    public static boolean totemCountActive = false;
+    public static int totemCountValue = 0;
     public static ArrayList<Packet<?>> packetsToSend = new ArrayList<>();
     public static ArrayList<Packet<?>> getPacketsToSend(){
         return packetsToSend;
@@ -33,30 +35,47 @@ public class totemlogic {
         packetsToSend.removeFirst();
     }
 
-    public static void refillTotem(boolean force) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = client.player;
+    public static void refillTotem() {
+        if (packetsToSend.isEmpty()) {
+            MinecraftClient client = MinecraftClient.getInstance();
+            PlayerEntity player = client.player;
 
-        if (player == null) return;
+            if (player == null) return;
 
-        if (!force && totemOnOffhand()) {
-            IngameChat.sendColourChat("You already have a totem.", "yellow");
-            return;
+            if (totemOnOffhand()) {
+                IngameChat.sendColourChat("You already have a totem.", "yellow");
+                return;
+            }
+
+            IngameChat.sendColourChat("Refilling totem!", "green");
+            int spareTotemSlot = getSlotWithSpareTotem();
+            if (spareTotemSlot == -1) {
+                IngameChat.sendColourChat("No totem!", "red");
+                return;
+            }
+            moveTotemToOffhand();
         }
-
-        IngameChat.sendColourChat("Refilling totem!", "green");
-        int spareTotemSlot = getSlotWithSpareTotem();
-        if (spareTotemSlot == -1) {
-            IngameChat.sendColourChat("No totem!", "red");
-            return;
-        }
-        moveTotemToOffhand();
     }
 
     public static boolean totemOnOffhand(){
         MinecraftClient client = MinecraftClient.getInstance();
         PlayerEntity player = client.player;
         return player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING;
+    }
+
+    public static int getTotemCount() {
+        //prefer take from inventory
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
+        //take from hotbar
+        int count = 0;
+        for (int i = 0; i < player.getInventory().main.size(); i++) {
+            ItemStack stack = player.getInventory().main.get(i);
+            if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Unique
@@ -79,7 +98,6 @@ public class totemlogic {
                 return i;
             }
         }
-
         return -1;
     }
 
@@ -104,6 +122,8 @@ public class totemlogic {
 
             // Restore Old Hotbar Slot
             packetsToSend.add(new UpdateSelectedSlotC2SPacket(inventory.selectedSlot));
+
+            packetsToSend.add(null);
         } else {
 
             packetsToSend.add(new ClickSlotC2SPacket(
@@ -125,6 +145,8 @@ public class totemlogic {
                     totemStack,
                     new Int2ObjectOpenHashMap<>()
             ));
+
+            packetsToSend.add(null);
         }
     }
     public static void stopTotemSound() {
