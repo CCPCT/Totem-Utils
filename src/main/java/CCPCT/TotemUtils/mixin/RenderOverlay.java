@@ -17,7 +17,7 @@ public class RenderOverlay {
         @Inject(method = "render", at = @At("TAIL"))
         private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
             MinecraftClient client = MinecraftClient.getInstance();
-            if (ModConfig.get().totemPopScreen && totemlogic.overlayactive) {
+            if (totemlogic.overlayactive) {
                 int width = client.getWindow().getScaledWidth();
                 int height = client.getWindow().getScaledHeight();
                 int argb = (ModConfig.get().totemPopScreenAlpha << 24) | ModConfig.get().totemPopScreenColour;
