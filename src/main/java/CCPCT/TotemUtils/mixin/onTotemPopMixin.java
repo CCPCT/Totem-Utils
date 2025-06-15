@@ -82,7 +82,7 @@ public class onTotemPopMixin {
 
         // auto totem
         if (ModConfig.get().autoTotem) {
-            totemlogic.refillTotem();
+            totemlogic.refillTotem(true);
         } else {
             IngameChat.sendColourChat("You Popped!", "red");
         }

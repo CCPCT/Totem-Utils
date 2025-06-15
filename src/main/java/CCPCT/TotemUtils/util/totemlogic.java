@@ -35,8 +35,10 @@ public class totemlogic {
         packetsToSend.removeFirst();
     }
 
-    public static void refillTotem() {
-        if (packetsToSend.isEmpty()) {
+    public static void refillTotem(boolean force) {
+        if (force){
+            moveTotemToOffhand();
+        } else if (packetsToSend.isEmpty()) {
             MinecraftClient client = MinecraftClient.getInstance();
             PlayerEntity player = client.player;
 

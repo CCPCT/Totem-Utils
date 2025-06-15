@@ -43,7 +43,7 @@ public class TotemUtilsClient implements ClientModInitializer {
             if (swapTotemKey.wasPressed()) {
                 // swap totem
                 IngameChat.sendChat("Switching totem");
-                totemlogic.refillTotem();
+                totemlogic.refillTotem(false);
             }
 
             if (configScreenKey.wasPressed()) {
