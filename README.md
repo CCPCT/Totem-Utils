@@ -1,8 +1,11 @@
 Minecraft mod to optimise totem experience in pvp
-Options:
-- customise self totem pop sound
+Customisable options:
+- self totem pop sound
 - hot key to equip totem
-- option to autototem (not recommanded in pvp servers)
+- autototem (not recommanded in pvp servers)
+- pop overlay
+- totem count
 
-To download newest version, either visit modrinth: https://modrinth.com/mod/totemutils
-or go to release: https://github.com/CCPCT/Totem-Utils/releases
+To download latest version, visit 
+[modrinth](https://modrinth.com/mod/totemutils) or [release](https://github.com/CCPCT/Totem-Utils/releases)
+~~or compile urself with the source code :)~~
