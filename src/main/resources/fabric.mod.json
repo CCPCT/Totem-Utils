@@ -13,7 +13,8 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "CCPCT.TotemUtils.client.TotemUtilsClient"
+      "CCPCT.TotemUtils.client.TotemUtilsClient",
+      "CCPCT.TotemUtils.util.Packets"
     ],
     "modmenu": [
       "CCPCT.TotemUtils.ModMenu.ModMenu"

@@ -7,10 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
@@ -20,25 +18,15 @@ import net.minecraft.util.Identifier;
 import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Unique;
 
-
-import java.util.ArrayList;
-
-public class totemlogic {
+public class Logic {
     public static boolean overlayactive = false;
     public static boolean totemCountActive = false;
     public static int totemCountValue = 0;
-    public static ArrayList<Packet<?>> packetsToSend = new ArrayList<>();
-    public static ArrayList<Packet<?>> getPacketsToSend(){
-        return packetsToSend;
-    }
-    public static void popPacketsToSend(){
-        packetsToSend.removeFirst();
-    }
 
     public static void refillTotem(boolean force) {
         if (force){
             moveTotemToOffhand();
-        } else if (packetsToSend.isEmpty()) {
+        } else if (Packets.isQueueEmpty()) {
             MinecraftClient client = MinecraftClient.getInstance();
             PlayerEntity player = client.player;
 
@@ -111,22 +99,26 @@ public class totemlogic {
         PlayerInventory inventory = player.getInventory();
 
         if (fromSlot < 9) {
+            // hotbar case
             // Select Totem Slot
-            packetsToSend.add(new UpdateSelectedSlotC2SPacket(fromSlot));
+            Packets.selectHotbarSlot(fromSlot,false);
 
-            // Move Totem To Offhand
-            packetsToSend.add(new PlayerActionC2SPacket(
+            // Swap Totem to Offhand
+            Packets.sendPacket(new PlayerActionC2SPacket(
                     PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND,
                     BlockPos.ORIGIN,
                     Direction.DOWN
-            ));
+            ),true);
 
             // Restore Old Hotbar Slot
-            packetsToSend.add(new UpdateSelectedSlotC2SPacket(inventory.selectedSlot));
+            Packets.selectHotbarSlot(inventory.selectedSlot,true);
+            //delay
+            Packets.sendPacket(null,true);
+            Packets.sendPacket(null,true);
 
-            packetsToSend.add(null);
         } else {
-            packetsToSend.add(new ClickSlotC2SPacket(
+
+            Packets.sendPacket(new ClickSlotC2SPacket(
                     screenHandler.syncId,
                     screenHandler.getRevision(),
                     fromSlot,
@@ -134,9 +126,9 @@ public class totemlogic {
                     SlotActionType.SWAP,
                     ItemStack.EMPTY,
                     new Int2ObjectOpenHashMap<>()
-            ));
+            ),false);
 
-            packetsToSend.add(null);
+            Packets.sendPacket(null,true);
         }
     }
     public static void stopTotemSound() {

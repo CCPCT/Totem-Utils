@@ -1,6 +1,6 @@
 package CCPCT.TotemUtils.mixin;
 
-import CCPCT.TotemUtils.util.totemlogic;
+import CCPCT.TotemUtils.util.Logic;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -17,7 +17,7 @@ public class RenderOverlay {
         @Inject(method = "render", at = @At("TAIL"))
         private void onRender(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
             MinecraftClient client = MinecraftClient.getInstance();
-            if (totemlogic.overlayactive) {
+            if (Logic.overlayactive) {
                 int width = client.getWindow().getScaledWidth();
                 int height = client.getWindow().getScaledHeight();
                 int argb = (ModConfig.get().totemPopScreenAlpha << 24) | ModConfig.get().totemPopScreenColour;
@@ -37,9 +37,9 @@ public class RenderOverlay {
                 // Draw right of hole to end of screen
                 context.fill(centerX + holeWidth / 2, centerY - holeHeight / 2, width, centerY + holeHeight / 2, argb);
             }
-            if (totemlogic.totemCountActive || ModConfig.get().totemCountTime == -1){
+            if (Logic.totemCountActive || ModConfig.get().totemCountTime == -1){
                 int argb = (ModConfig.get().totemCountAlpha << 24) | ModConfig.get().totemCountColour;
-                context.drawText(client.textRenderer, String.valueOf(totemlogic.getTotemCount()), ModConfig.get().totemCountx, ModConfig.get().totemCounty, argb, true);
+                context.drawText(client.textRenderer, String.valueOf(Logic.getTotemCount()), ModConfig.get().totemCountx, ModConfig.get().totemCounty, argb, true);
             }
         }
     }

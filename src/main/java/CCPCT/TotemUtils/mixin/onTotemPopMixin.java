@@ -1,15 +1,10 @@
 package CCPCT.TotemUtils.mixin;
 
 import net.minecraft.client.MinecraftClient;
-
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.GameRenderer;
-
 import net.minecraft.entity.player.PlayerEntity;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.Packet;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -17,11 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-
 import CCPCT.TotemUtils.config.ModConfig;
 import CCPCT.TotemUtils.util.Chat;
-import CCPCT.TotemUtils.util.totemlogic;
+import CCPCT.TotemUtils.util.Logic;
 
 @Mixin(GameRenderer.class)
 public class onTotemPopMixin {
@@ -30,43 +23,39 @@ public class onTotemPopMixin {
     public int overlaytickleft = 0;
     @Unique
     public int counttickleft = 0;
+    @Unique
+    private int autoTotemDelay = -1;
 
     @Inject(at = @At("TAIL"), method = "tick")
     private void onTick(CallbackInfo ci) {
-        if (totemlogic.overlayactive){
-            if (overlaytickleft <= 0 || (totemlogic.totemOnOffhand() && 5<=ModConfig.get().totemPopScreenDuration*20-overlaytickleft)){
-                totemlogic.overlayactive = false;
+        // timer
+        if (Logic.overlayactive){
+            if (overlaytickleft <= 0 || (Logic.totemOnOffhand() && 5<=ModConfig.get().totemPopScreenDuration*20-overlaytickleft)){
+                Logic.overlayactive = false;
             } else {
                 overlaytickleft--;
             }
         }
 
         if (ModConfig.get().totemCountTime<0){
-            totemlogic.totemCountActive = true;
-            totemlogic.totemCountValue = totemlogic.getTotemCount();
-        } else if (totemlogic.totemCountActive){
+            Logic.totemCountActive = true;
+            Logic.totemCountValue = Logic.getTotemCount();
+        } else if (Logic.totemCountActive){
             if (counttickleft <= 0){
-                totemlogic.totemCountActive = false;
+                Logic.totemCountActive = false;
             } else {
                 counttickleft--;
             }
         }
 
 
-        ArrayList<Packet<?>> packetsToSend = totemlogic.getPacketsToSend();
-        if (packetsToSend.isEmpty())
-            return;
-        if (packetsToSend.getFirst() == null){
-            totemlogic.popPacketsToSend();
-            return;
+        if (autoTotemDelay == 0 && ModConfig.get().autoTotem) {
+            Logic.refillTotem(true);
+        }
+        if (autoTotemDelay>=0){
+            autoTotemDelay--;
         }
 
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        if (networkHandler == null)
-            return;
-
-        networkHandler.sendPacket(packetsToSend.getFirst());
-        totemlogic.popPacketsToSend();
     }
 
     @Inject(at = @At("TAIL"), method = "showFloatingItem")
@@ -83,24 +72,26 @@ public class onTotemPopMixin {
 
         // auto totem
         if (ModConfig.get().autoTotem) {
-            totemlogic.refillTotem(true);
+            autoTotemDelay = ModConfig.get().autoTotemDelay;
         } else {
             Chat.colour("You Popped!", "red");
         }
+
+        // custom sound
         if (ModConfig.get().customSound) {
-            totemlogic.stopTotemSound();
-            totemlogic.playCustomSound();
+            Logic.stopTotemSound();
+            Logic.playCustomSound();
         }
 
         // screen overlay
         if (ModConfig.get().totemPopScreen) {
             overlaytickleft = ModConfig.get().totemPopScreenDuration*20;
-            totemlogic.overlayactive = true;
+            Logic.overlayactive = true;
         }
 
         // totem count
         if (ModConfig.get().totemCountTime>0){
-            totemlogic.totemCountActive = true;
+            Logic.totemCountActive = true;
             counttickleft = ModConfig.get().totemCountTime * 20;
         }
     }

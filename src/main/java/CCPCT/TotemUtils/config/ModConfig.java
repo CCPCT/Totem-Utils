@@ -10,6 +10,7 @@ import java.nio.file.Path;
 
 public class ModConfig {
     public boolean autoTotem = false;
+    public int autoTotemDelay = 0;
     public boolean chatfeedback = true;
 
     public boolean customSound = true;
