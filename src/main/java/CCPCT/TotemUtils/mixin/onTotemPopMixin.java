@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 
 import CCPCT.TotemUtils.config.ModConfig;
-import CCPCT.TotemUtils.util.IngameChat;
+import CCPCT.TotemUtils.util.Chat;
 import CCPCT.TotemUtils.util.totemlogic;
 
 @Mixin(GameRenderer.class)
@@ -85,7 +85,7 @@ public class onTotemPopMixin {
         if (ModConfig.get().autoTotem) {
             totemlogic.refillTotem(true);
         } else {
-            IngameChat.sendColourChat("You Popped!", "red");
+            Chat.colour("You Popped!", "red");
         }
         if (ModConfig.get().customSound) {
             totemlogic.stopTotemSound();

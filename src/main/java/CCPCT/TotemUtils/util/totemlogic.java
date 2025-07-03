@@ -45,14 +45,14 @@ public class totemlogic {
             if (player == null) return;
 
             if (totemOnOffhand()) {
-                IngameChat.sendColourChat("You already have a totem.", "yellow");
+                Chat.colour("You already have a totem.", "yellow");
                 return;
             }
 
-            IngameChat.sendColourChat("Refilling totem!", "green");
+            Chat.colour("Refilling totem!", "green");
             int spareTotemSlot = getSlotWithSpareTotem();
             if (spareTotemSlot == -1) {
-                IngameChat.sendColourChat("No totem!", "red");
+                Chat.colour("No totem!", "red");
                 return;
             }
             moveTotemToOffhand();
@@ -60,15 +60,15 @@ public class totemlogic {
     }
 
     public static boolean totemOnOffhand(){
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = client.player;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return false;
         return player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING;
     }
 
     public static int getTotemCount() {
         //prefer take from inventory
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = client.player;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
         //take from hotbar
         int count = 0;
         for (int i = 0; i < player.getInventory().main.size(); i++) {
@@ -83,8 +83,8 @@ public class totemlogic {
     @Unique
     private static int getSlotWithSpareTotem() {
         //prefer take from inventory
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = client.player;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
         for (int i = 9; i < player.getInventory().main.size(); i++) {
             ItemStack stack = player.getInventory().main.get(i);
 
@@ -104,12 +104,11 @@ public class totemlogic {
     }
 
     private static void moveTotemToOffhand() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        PlayerEntity player = client.player;
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return;
         ScreenHandler screenHandler = player.currentScreenHandler;
         int fromSlot = getSlotWithSpareTotem();
         PlayerInventory inventory = player.getInventory();
-        ItemStack totemStack = inventory.getStack(fromSlot).copy();
 
         if (fromSlot < 9) {
             // Select Totem Slot
@@ -127,24 +126,13 @@ public class totemlogic {
 
             packetsToSend.add(null);
         } else {
-
             packetsToSend.add(new ClickSlotC2SPacket(
                     screenHandler.syncId,
                     screenHandler.getRevision(),
                     fromSlot,
-                    0,
-                    SlotActionType.PICKUP,
+                    40,
+                    SlotActionType.SWAP,
                     ItemStack.EMPTY,
-                    new Int2ObjectOpenHashMap<>()
-            ));
-
-            packetsToSend.add(new ClickSlotC2SPacket(
-                    screenHandler.syncId,
-                    screenHandler.getRevision(),
-                    45,
-                    0,
-                    SlotActionType.PICKUP,
-                    totemStack,
                     new Int2ObjectOpenHashMap<>()
             ));
 

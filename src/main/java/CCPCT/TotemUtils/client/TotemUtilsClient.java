@@ -6,6 +6,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -18,9 +20,10 @@ import CCPCT.TotemUtils.config.configScreen;
 public class TotemUtilsClient implements ClientModInitializer {
     public static KeyBinding swapTotemKey;
     public static KeyBinding configScreenKey;
-
+    public static boolean checkedUpdate = false;
     @Override
     public void onInitializeClient() {
+
 
         load();
         // Register the keybinding
@@ -42,13 +45,37 @@ public class TotemUtilsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (swapTotemKey.wasPressed()) {
                 // swap totem
-                IngameChat.sendChat("Switching totem");
+                Chat.send("Switching totem");
                 totemlogic.refillTotem(false);
             }
 
             if (configScreenKey.wasPressed()) {
                 // open config
                 MinecraftClient.getInstance().setScreen(configScreen.getConfigScreen(MinecraftClient.getInstance().currentScreen));
+            }
+        });
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            if (checkedUpdate) return;
+            checkedUpdate = true;
+            String[] mcVersion = FabricLoader.getInstance()
+                    .getModContainer("totemutils").get()
+                    .getMetadata().getVersion().getFriendlyString()
+                    .split("-");
+            String newestVersion = VersionChecker.getNewestVersion(mcVersion[1]);
+
+            if (newestVersion == null){
+                Chat.colour("Failed to check for updates.", "red");
+                return;
+            }
+
+            if (VersionChecker.compareVersions(newestVersion, mcVersion[0]) > 0) {
+                Chat.send("A new version of §6Totem Utils§r is available: " + newestVersion + " for " + mcVersion[1]);
+                Chat.send("Links to download:");
+                Chat.link("[Github]", "https://github.com/CCPCT/Totem-Utils/releases");
+                Chat.link("[Modrinth]", "https://modrinth.com/mod/totemutils");
+            } else {
+                Chat.send("§6Totem Utils§r is up to date");
             }
         });
     }
