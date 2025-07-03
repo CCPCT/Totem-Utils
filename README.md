@@ -1,8 +1,9 @@
 Minecraft mod to optimise totem experience in pvp
 Customisable options:
 - self totem pop sound
-- hot key to equip totem
+- hot key to replenish totem
 - autototem (not recommanded in pvp servers)
+- delay for autototem
 - pop overlay
 - totem count
 

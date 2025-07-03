@@ -24,7 +24,6 @@ public class TotemUtilsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
-
         load();
         // Register the keybinding
         swapTotemKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
