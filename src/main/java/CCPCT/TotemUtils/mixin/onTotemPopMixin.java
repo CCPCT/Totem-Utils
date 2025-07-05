@@ -48,9 +48,9 @@ public class onTotemPopMixin {
             }
         }
 
-
+        // auto totem trigger
         if (autoTotemDelay == 0 && ModConfig.get().autoTotem) {
-            Logic.refillTotem(true);
+            Logic.refillTotem();
         }
         if (autoTotemDelay>=0){
             autoTotemDelay--;

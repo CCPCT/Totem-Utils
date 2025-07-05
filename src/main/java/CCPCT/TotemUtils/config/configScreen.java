@@ -1,10 +1,12 @@
 package CCPCT.TotemUtils.config;
 
+import CCPCT.TotemUtils.client.TotemUtilsClient;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.client.util.InputUtil;
 
 public class configScreen extends Screen {
 
@@ -26,7 +28,13 @@ public class configScreen extends Screen {
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
-        // Auto Totem toggle
+        // General settings
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Chat feedback"),ModConfig.get().chatfeedback)
+                .setDefaultValue(true)
+                .setTooltip(Text.literal("Send feedback in chat (only u can see), e.g. u popped ur totem"))
+                .setSaveConsumer(newValue -> ModConfig.get().chatfeedback = newValue)
+                .build());
+
         generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Auto Totem"),ModConfig.get().autoTotem)
                 .setDefaultValue(false)
                 .setTooltip(Text.literal("Don't use unless server allows"))
@@ -39,10 +47,34 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().autoTotemDelay = newValue)
                 .build());
 
-        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Chat feedback"),ModConfig.get().chatfeedback)
-                .setDefaultValue(true)
-                .setTooltip(Text.literal("Send feedback in chat (only u can see), e.g. u popped ur totem"))
-                .setSaveConsumer(newValue -> ModConfig.get().chatfeedback = newValue)
+        generalTab.addEntry(entryBuilder.startStrField(Text.literal("Replenish totem hotkey"), TotemUtilsClient.swapTotemKey.getBoundKeyTranslationKey())
+                .setTooltip(Text.literal("Recommanded to modify this option in the option menu"))
+                .setDefaultValue("key.keyboard.f")
+                .setSaveConsumer(newValue -> {
+                    try {
+                        TotemUtilsClient.swapTotemKey.setBoundKey(InputUtil.fromTranslationKey(newValue));
+                    } catch (Exception e) {
+                        TotemUtilsClient.swapTotemKey.setBoundKey(InputUtil.fromTranslationKey("key.keyboard.f"));
+                    }
+                })
+                .build());
+
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Replace main hand totem"),ModConfig.get().replaceMainHandTotem)
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("also replace main hand totem if popped or use hotkey"))
+                .setSaveConsumer(newValue -> ModConfig.get().replaceMainHandTotem = newValue)
+                .build());
+
+        generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())
+                .setTooltip(Text.literal("Recommanded to modify this option in the option menu"))
+                .setDefaultValue("key.keyboard.h")
+                .setSaveConsumer(newValue -> {
+                    try {
+                        TotemUtilsClient.configScreenKey.setBoundKey(InputUtil.fromTranslationKey(newValue));
+                    } catch (Exception e) {
+                        TotemUtilsClient.configScreenKey.setBoundKey(InputUtil.fromTranslationKey("key.keyboard.h"));
+                    }
+                })
                 .build());
 
 

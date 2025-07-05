@@ -44,8 +44,7 @@ public class TotemUtilsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (swapTotemKey.isPressed()) {
                 // swap totem
-                Chat.send("Switching totem");
-                Logic.refillTotem(false);
+                Logic.refillTotem();
             }
 
             if (configScreenKey.wasPressed()) {

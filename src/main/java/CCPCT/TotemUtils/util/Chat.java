@@ -8,11 +8,11 @@ import net.minecraft.util.Formatting;
 import CCPCT.TotemUtils.config.ModConfig;
 
 public class Chat {
-    public static void send(String message) {
+    public static <T> void send(T message) {
         if (ModConfig.get().chatfeedback) {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player != null) {
-                client.player.sendMessage(Text.literal(message), false);
+                client.player.sendMessage(Text.literal(message.toString()), false);
             }
         }
     }

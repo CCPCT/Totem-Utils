@@ -1,14 +1,19 @@
 package CCPCT.TotemUtils.util;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 
 import java.util.ArrayList;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.SlotActionType;
 
 public class Packets implements ClientModInitializer {
     private static final ArrayList<Packet<?>> packetsToSend = new ArrayList<>();
@@ -45,10 +50,43 @@ public class Packets implements ClientModInitializer {
     }
 
     //packet methods
+//    public static void clickItem(int slot, ItemStack holding, boolean delay) {
+//        if (MinecraftClient.getInstance().player == null) return;
+//        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+//        sendPacket(new ClickSlotC2SPacket(
+//                screenHandler.syncId,
+//                screenHandler.getRevision(),
+//                slot,
+//                0,
+//                SlotActionType.PICKUP,
+//                holding,
+//                new Int2ObjectOpenHashMap<>()
+//        ),delay);
+//    }
+
+    public static void swapItem(int slot, int to, boolean delay) {
+        if (MinecraftClient.getInstance().player == null) return;
+        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+        sendPacket(new ClickSlotC2SPacket(
+                screenHandler.syncId,
+                screenHandler.getRevision(),
+                slot,
+                to,
+                SlotActionType.SWAP,
+                ItemStack.EMPTY,
+                new Int2ObjectOpenHashMap<>()
+        ),delay);
+    }
+
+
     public static void selectHotbarSlot(int slot, boolean delay) {
         // use protocal number
         if (slot < 0 || slot > 8) return; // validate slot
         sendPacket(new UpdateSelectedSlotC2SPacket(slot),delay);
 
+    }
+
+    public static void sendNull(){
+        sendPacket(null,true);
     }
 }

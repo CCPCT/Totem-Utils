@@ -1,50 +1,48 @@
 package CCPCT.TotemUtils.util;
 
 import CCPCT.TotemUtils.config.ModConfig;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.Identifier;
 import net.minecraft.sound.SoundCategory;
-import org.spongepowered.asm.mixin.Unique;
 
 public class Logic {
     public static boolean overlayactive = false;
     public static boolean totemCountActive = false;
     public static int totemCountValue = 0;
 
-    public static void refillTotem(boolean force) {
-        if (force){
-            moveTotemToOffhand();
-        } else if (Packets.isQueueEmpty()) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            PlayerEntity player = client.player;
+    public static void refillTotem() {
+        if (!Packets.isQueueEmpty()) return;
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
 
-            if (player == null) return;
+        if (player == null) return;
+        int slot = Logic.getSlotWithSpareTotem(0);
+        if (ModConfig.get().replaceMainHandTotem && player.getMainHandStack().isEmpty() && slot >= 9){
+            // move totem to mainhand
+            Chat.colour("Refilling mainhand!", "green");
 
-            if (totemOnOffhand()) {
-                Chat.colour("You already have a totem.", "yellow");
-                return;
-            }
-
-            Chat.colour("Refilling totem!", "green");
-            int spareTotemSlot = getSlotWithSpareTotem();
-            if (spareTotemSlot == -1) {
-                Chat.colour("No totem!", "red");
-                return;
-            }
-            moveTotemToOffhand();
+            Packets.swapItem(slot, player.getInventory().selectedSlot, true);
+            Packets.sendNull();
+            slot = Logic.getSlotWithSpareTotem(1);
         }
+
+        // move totem to offhand
+        if (totemOnOffhand()) return;
+        Chat.colour("Refilling Offhand!", "green");
+        if (slot == -1) {
+            Chat.colour("No totem!", "red");
+            return;
+        }
+        moveTotemToOffhand(slot);
     }
 
     public static boolean totemOnOffhand(){
@@ -65,11 +63,14 @@ public class Logic {
                 count++;
             }
         }
+        // count offhand
+        ItemStack stack = player.getInventory().offHand.getFirst();
+        if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) count++;
+
         return count;
     }
 
-    @Unique
-    private static int getSlotWithSpareTotem() {
+    private static int getSlotWithSpareTotem(int ignoring) {
         //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
@@ -77,7 +78,11 @@ public class Logic {
             ItemStack stack = player.getInventory().main.get(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
-                return i;
+                if (ignoring > 0){
+                    ignoring--;
+                } else {
+                    return i;
+                }
             }
         }
         //take from hotbar
@@ -85,17 +90,19 @@ public class Logic {
             ItemStack stack = player.getInventory().main.get(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
-                return i;
+                if (ignoring > 0){
+                    ignoring--;
+                } else {
+                    return i;
+                }
             }
         }
         return -1;
     }
 
-    private static void moveTotemToOffhand() {
+    private static void moveTotemToOffhand(int fromSlot) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;
-        ScreenHandler screenHandler = player.currentScreenHandler;
-        int fromSlot = getSlotWithSpareTotem();
         PlayerInventory inventory = player.getInventory();
 
         if (fromSlot < 9) {
@@ -113,22 +120,12 @@ public class Logic {
             // Restore Old Hotbar Slot
             Packets.selectHotbarSlot(inventory.selectedSlot,true);
             //delay
-            Packets.sendPacket(null,true);
-            Packets.sendPacket(null,true);
+            Packets.sendNull();
+            Packets.sendNull();
 
         } else {
-
-            Packets.sendPacket(new ClickSlotC2SPacket(
-                    screenHandler.syncId,
-                    screenHandler.getRevision(),
-                    fromSlot,
-                    40,
-                    SlotActionType.SWAP,
-                    ItemStack.EMPTY,
-                    new Int2ObjectOpenHashMap<>()
-            ),false);
-
-            Packets.sendPacket(null,true);
+            Packets.swapItem(fromSlot,40,false);
+            Packets.sendNull();
         }
     }
     public static void stopTotemSound() {
