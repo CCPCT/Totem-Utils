@@ -62,7 +62,7 @@ public class Packets implements ClientModInitializer {
                 (byte) to,
                 SlotActionType.SWAP,
                 new Int2ObjectOpenHashMap<>(),
-                ItemStackHash.fromItemStack(screenHandler.getSlot(slot).getStack(), networkHandler.method_68823())
+                ItemStackHash.fromItemStack(screenHandler.getSlot(slot).getStack(), networkHandler.getComponentHasher())
         ),delay);
     }
 
