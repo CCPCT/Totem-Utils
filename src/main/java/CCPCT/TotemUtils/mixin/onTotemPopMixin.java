@@ -74,7 +74,7 @@ public class onTotemPopMixin {
         if (ModConfig.get().autoTotem) {
             autoTotemDelay = ModConfig.get().autoTotemDelay;
         } else {
-            Chat.colour("You Popped!", "red");
+            Chat.send("§cPopped!", true);
         }
 
         // custom sound

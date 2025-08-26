@@ -24,7 +24,6 @@ public class VersionChecker {
             List<String> tags = parseTagNames(json);
             return findNewestModVersion(tags, mcVersion);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

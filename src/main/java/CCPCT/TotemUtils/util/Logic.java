@@ -27,8 +27,7 @@ public class Logic {
         int slot = Logic.getSlotWithSpareTotem(0);
         if (ModConfig.get().replaceMainHandTotem && player.getMainHandStack().isEmpty() && slot >= 9){
             // move totem to mainhand
-            Chat.colour("Refilling mainhand!", "green");
-
+            Chat.send("§aRefilled mainhand",true);
             Packets.swapItem(slot, player.getInventory().getSelectedSlot(), true);
             Packets.sendNull();
             slot = Logic.getSlotWithSpareTotem(1);
@@ -36,9 +35,9 @@ public class Logic {
 
         // move totem to offhand
         if (totemOnOffhand()) return;
-        Chat.colour("Refilling Offhand!", "green");
+        Chat.send("§aRefilled offhand",true);
         if (slot == -1) {
-            Chat.colour("No totem!", "red");
+            Chat.send("§cNo Totem!!",true);
             return;
         }
         moveTotemToOffhand(slot);
