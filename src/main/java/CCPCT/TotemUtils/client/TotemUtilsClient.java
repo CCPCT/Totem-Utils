@@ -67,6 +67,11 @@ public class TotemUtilsClient implements ClientModInitializer {
                 return;
             }
 
+            if (newestVersion.isEmpty()){
+                Chat.colour("Found no compatible version", "red");
+                return;
+            }
+
             if (VersionChecker.compareVersions(newestVersion, mcVersion[0]) > 0) {
                 Chat.send("A new version of §6Totem Utils§r is available: " + newestVersion + " for " + mcVersion[1]);
                 Chat.send("Links to download:");

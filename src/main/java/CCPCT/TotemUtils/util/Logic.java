@@ -7,7 +7,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -30,7 +29,7 @@ public class Logic {
             // move totem to mainhand
             Chat.colour("Refilling mainhand!", "green");
 
-            Packets.swapItem(slot, player.getInventory().selectedSlot, true);
+            Packets.swapItem(slot, player.getInventory().getSelectedSlot(), true);
             Packets.sendNull();
             slot = Logic.getSlotWithSpareTotem(1);
         }
@@ -48,7 +47,7 @@ public class Logic {
     public static boolean totemOnOffhand(){
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return false;
-        return player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING;
+        return player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING;
     }
 
     public static int getTotemCount() {
@@ -57,14 +56,15 @@ public class Logic {
         if (player == null) return -1;
         //take from hotbar
         int count = 0;
-        for (int i = 0; i < player.getInventory().main.size(); i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
                 count++;
             }
+
         }
         // count offhand
-        ItemStack stack = player.getInventory().offHand.getFirst();
+        ItemStack stack = player.getOffHandStack();
         if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) count++;
 
         return count;
@@ -74,8 +74,8 @@ public class Logic {
         //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
-        for (int i = 9; i < player.getInventory().main.size(); i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+        for (int i = 9; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
                 if (ignoring > 0){
@@ -87,7 +87,7 @@ public class Logic {
         }
         //take from hotbar
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+            ItemStack stack = player.getInventory().getStack(i);
 
             if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
                 if (ignoring > 0){
@@ -118,7 +118,7 @@ public class Logic {
             ),true);
 
             // Restore Old Hotbar Slot
-            Packets.selectHotbarSlot(inventory.selectedSlot,true);
+            Packets.selectHotbarSlot(inventory.getSelectedSlot(),true);
             //delay
             Packets.sendNull();
             Packets.sendNull();

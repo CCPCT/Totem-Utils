@@ -7,6 +7,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import CCPCT.TotemUtils.config.ModConfig;
 
+import java.net.URI;
+
 public class Chat {
     public static <T> void send(T message) {
         if (ModConfig.get().chatfeedback) {
@@ -33,10 +35,8 @@ public class Chat {
                 .setStyle(Style.EMPTY
                         .withColor(Formatting.BLUE)
                         .withUnderline(true)
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.OPEN_URL,
-                                link
-                        )));
+                        .withClickEvent(new ClickEvent.OpenUrl(URI.create(link))) // <-- use the record
+                );
 
         MinecraftClient.getInstance().player.sendMessage(messageToSend, false);
     }

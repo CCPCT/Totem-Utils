@@ -63,7 +63,7 @@ public class VersionChecker {
     }
 
     private static String findNewestModVersion(List<String> tags, String mcVersion) {
-        String newestModVersion = null;
+        String newestModVersion = "";
 
         for (String tag : tags) {
             String[] parts = tag.split("-");
@@ -75,7 +75,7 @@ public class VersionChecker {
 
             if (!tagMcVersion.equals(mcVersion)) continue;
 
-            if (newestModVersion == null || compareVersions(modVersion, newestModVersion) > 0) {
+            if (newestModVersion.isEmpty() || compareVersions(modVersion, newestModVersion) > 0) {
                 newestModVersion = modVersion;
             }
         }
