@@ -7,7 +7,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -28,8 +27,7 @@ public class Logic {
         int slot = Logic.getSlotWithSpareTotem(0);
         if (ModConfig.get().replaceMainHandTotem && player.getMainHandStack().isEmpty() && slot >= 9){
             // move totem to mainhand
-            Chat.colour("Refilling mainhand!", "green");
-
+            Chat.send("§aRefilled mainhand",true);
             Packets.swapItem(slot, player.getInventory().selectedSlot, true);
             Packets.sendNull();
             slot = Logic.getSlotWithSpareTotem(1);
@@ -37,9 +35,9 @@ public class Logic {
 
         // move totem to offhand
         if (totemOnOffhand()) return;
-        Chat.colour("Refilling Offhand!", "green");
+        Chat.send("§aRefilled offhand",true);
         if (slot == -1) {
-            Chat.colour("No totem!", "red");
+            Chat.send("§cNo Totem!!",true);
             return;
         }
         moveTotemToOffhand(slot);

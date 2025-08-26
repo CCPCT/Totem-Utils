@@ -8,20 +8,11 @@ import net.minecraft.util.Formatting;
 import CCPCT.TotemUtils.config.ModConfig;
 
 public class Chat {
-    public static <T> void send(T message) {
+    public static <T> void send(T message,boolean action) {
         if (ModConfig.get().chatfeedback) {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player != null) {
-                client.player.sendMessage(Text.literal(message.toString()), false);
-            }
-        }
-    }
-
-    public static void colour(String message, String color) {
-        if (ModConfig.get().chatfeedback) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.player != null) {
-                client.player.sendMessage(Text.literal(message).formatted(Formatting.byName(color.toLowerCase())), false);
+                client.player.sendMessage(Text.literal("§e[Totem Utils]§r "+message.toString()), action);
             }
         }
     }

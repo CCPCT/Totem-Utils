@@ -63,17 +63,22 @@ public class TotemUtilsClient implements ClientModInitializer {
             String newestVersion = VersionChecker.getNewestVersion(mcVersion[1]);
 
             if (newestVersion == null){
-                Chat.colour("Failed to check for updates.", "red");
+                Chat.send("§cFailed to check for updates.", false);
+                return;
+            }
+
+            if (newestVersion.isEmpty()){
+                Chat.send("§cFound no compatible version", false);
                 return;
             }
 
             if (VersionChecker.compareVersions(newestVersion, mcVersion[0]) > 0) {
-                Chat.send("A new version of §6Totem Utils§r is available: " + newestVersion + " for " + mcVersion[1]);
-                Chat.send("Links to download:");
+                Chat.send("Mod update available: " + newestVersion + " for " + mcVersion[1],false);
+                Chat.send("Links to download:",false);
                 Chat.link("[Github]", "https://github.com/CCPCT/Totem-Utils/releases");
                 Chat.link("[Modrinth]", "https://modrinth.com/mod/totemutils");
             } else {
-                Chat.send("§6Totem Utils§r is up to date");
+                Chat.send("§aMod is up to date",true);
             }
         });
     }
