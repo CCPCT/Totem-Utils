@@ -59,10 +59,16 @@ public class configScreen extends Screen {
                 })
                 .build());
 
-        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Replace main hand totem"),ModConfig.get().replaceMainHandTotem)
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Replenish main hand totem"),ModConfig.get().replenishMainHandTotem)
                 .setDefaultValue(false)
-                .setTooltip(Text.literal("also replace main hand totem if popped or use hotkey"))
-                .setSaveConsumer(newValue -> ModConfig.get().replaceMainHandTotem = newValue)
+                .setTooltip(Text.literal("Replenish main hand totem if popped or use hotkey, and nothing on mainhand"))
+                .setSaveConsumer(newValue -> ModConfig.get().replenishMainHandTotem = newValue)
+                .build());
+
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Replenish other items"),ModConfig.get().replenishGeneralItem)
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("also replenish main hand items"))
+                .setSaveConsumer(newValue -> ModConfig.get().replenishGeneralItem = newValue)
                 .build());
 
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())

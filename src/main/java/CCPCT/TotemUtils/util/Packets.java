@@ -49,20 +49,34 @@ public class Packets implements ClientModInitializer {
         }
     }
 
-    //packet methods
-//    public static void clickItem(int slot, ItemStack holding, boolean delay) {
-//        if (MinecraftClient.getInstance().player == null) return;
-//        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
-//        sendPacket(new ClickSlotC2SPacket(
-//                screenHandler.syncId,
-//                screenHandler.getRevision(),
-//                slot,
-//                0,
-//                SlotActionType.PICKUP,
-//                holding,
-//                new Int2ObjectOpenHashMap<>()
-//        ),delay);
-//    }
+    // packet methods
+    public static void clickItem(int slot, ItemStack holding, boolean delay) {
+        if (MinecraftClient.getInstance().player == null) return;
+        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+        sendPacket(new ClickSlotC2SPacket(
+                screenHandler.syncId,
+                screenHandler.getRevision(),
+                slot,
+                0,
+                SlotActionType.PICKUP,
+                holding,
+                new Int2ObjectOpenHashMap<>()
+        ),delay);
+    }
+
+    public static void doubleClickItem(int slot, ItemStack holding, boolean delay) {
+        if (MinecraftClient.getInstance().player == null) return;
+        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+        sendPacket(new ClickSlotC2SPacket(
+                screenHandler.syncId,
+                screenHandler.getRevision(),
+                slot,
+                0,
+                SlotActionType.PICKUP_ALL,
+                holding,
+                new Int2ObjectOpenHashMap<>()
+        ),delay);
+    }
 
     public static void swapItem(int slot, int to, boolean delay) {
         if (MinecraftClient.getInstance().player == null) return;
