@@ -12,7 +12,8 @@ public class ModConfig {
     public boolean autoTotem = false;
     public int autoTotemDelay = 0;
     public boolean chatfeedback = true;
-    public boolean replaceMainHandTotem = false;
+    public boolean replenishMainHandTotem = false;
+    public boolean replenishGeneralItem = false;
 
     public boolean customSound = true;
     public String customSoundName = "minecraft:item.shield.break";
