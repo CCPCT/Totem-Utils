@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 
 import java.util.ArrayList;
@@ -47,6 +48,36 @@ public class Packets implements ClientModInitializer {
         } else {
             networkHandler.sendPacket(packet);
         }
+    }
+
+    public static void clickItem(int slot, ItemStack holding, boolean delay) {
+        if (MinecraftClient.getInstance().player == null) return;
+        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+        sendPacket(new ClickSlotC2SPacket(
+                screenHandler.syncId,
+                screenHandler.getRevision(),
+                (short) slot,
+                (byte) 0,
+                SlotActionType.PICKUP,
+                new Int2ObjectOpenHashMap<>(),
+                ItemStackHash.fromItemStack(screenHandler.getSlot(slot).getStack(), networkHandler.getComponentHasher())
+        ),delay);
+    }
+
+    public static void doubleClickItem(int slot, ItemStack holding, boolean delay) {
+        if (MinecraftClient.getInstance().player == null) return;
+        ScreenHandler screenHandler = MinecraftClient.getInstance().player.currentScreenHandler;
+        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        sendPacket(new ClickSlotC2SPacket(
+                screenHandler.syncId,
+                screenHandler.getRevision(),
+                (short) slot,
+                (byte) 0,
+                SlotActionType.PICKUP_ALL,
+                new Int2ObjectOpenHashMap<>(),
+                ItemStackHash.fromItemStack(screenHandler.getSlot(slot).getStack(), networkHandler.getComponentHasher())
+        ),delay);
     }
 
     public static void swapItem(int slot, int to, boolean delay) {

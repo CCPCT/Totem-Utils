@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.Item;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -22,19 +23,43 @@ public class Logic {
         if (!Packets.isQueueEmpty()) return;
         MinecraftClient client = MinecraftClient.getInstance();
         PlayerEntity player = client.player;
-
         if (player == null) return;
+        ItemStack mainhandStack = player.getMainHandStack();
+
         int slot = Logic.getSlotWithSpareTotem(0);
-        if (ModConfig.get().replaceMainHandTotem && player.getMainHandStack().isEmpty() && slot >= 9){
-            // move totem to mainhand
-            Chat.send("§aRefilled mainhand",true);
-            Packets.swapItem(slot, player.getInventory().getSelectedSlot(), true);
-            Packets.sendNull();
-            slot = Logic.getSlotWithSpareTotem(1);
+        // replenish main hand
+        if (ModConfig.get().replenishMainHandTotem && mainhandStack.isEmpty()){
+            if (slot==-1) {
+                Chat.send("§cNo totem!", true);
+            }
+            if (slot >= 9) {
+                // move totem from inv to mainhand
+                Chat.send("§aRefilled mainhand", true);
+                Packets.swapItem(slot, player.getInventory().getSelectedSlot(), true);
+                Packets.sendNull();
+                slot = Logic.getSlotWithSpareTotem(1);
+            } // dont allow moving 2 items by pressing 1 button!!
         }
 
         // move totem to offhand
-        if (totemOnOffhand()) return;
+        if (totemOnOffhand()) {
+            if (ModConfig.get().replenishGeneralItem){
+                // replenish item if totem on offhand
+                if (mainhandStack.getCount()==mainhandStack.getMaxCount()) return; // dont need to replenish
+                int replenishSlot = getSlotWithSpareItem(mainhandStack.getItem(),0);
+                if (replenishSlot<=8) return; // cant replenish
+                int hotslot = player.getInventory().getSelectedSlot() + 36;
+                Packets.clickItem(hotslot, ItemStack.EMPTY,true);
+                Packets.doubleClickItem(hotslot,mainhandStack,true);
+                mainhandStack.setCount(Math.min(mainhandStack.getMaxCount(),getItemCount(mainhandStack.getItem(),false))); //update content
+                Packets.clickItem(hotslot, mainhandStack,true);
+                Packets.sendNull();
+
+
+            }
+            return;
+        }
+
         Chat.send("§aRefilled offhand",true);
         if (slot == -1) {
             Chat.send("§cNo Totem!!",true);
@@ -50,6 +75,10 @@ public class Logic {
     }
 
     public static int getTotemCount() {
+        return getItemCount(Items.TOTEM_OF_UNDYING, true);
+    }
+
+    public static int getItemCount(Item item, boolean offhand) {
         //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
@@ -57,26 +86,29 @@ public class Logic {
         int count = 0;
         for (int i = 0; i < player.getInventory().size(); i++) {
             ItemStack stack = player.getInventory().getStack(i);
-            if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
-                count++;
+            if (!stack.isEmpty() && stack.getItem() == item) {
+                count+=stack.getCount();
             }
 
         }
         // count offhand
         ItemStack stack = player.getOffHandStack();
-        if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) count++;
+        if (!stack.isEmpty() && stack.getItem() == item) count+=stack.getCount();;
 
         return count;
     }
 
     private static int getSlotWithSpareTotem(int ignoring) {
-        //prefer take from inventory
+        return getSlotWithSpareItem(Items.TOTEM_OF_UNDYING, ignoring);
+    }
+
+    private static int getSlotWithSpareItem(Item item, int ignoring) {        //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
         for (int i = 9; i < player.getInventory().size(); i++) {
             ItemStack stack = player.getInventory().getStack(i);
 
-            if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
+            if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
                     ignoring--;
                 } else {
@@ -88,7 +120,7 @@ public class Logic {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getStack(i);
 
-            if (!stack.isEmpty() && stack.getItem() == Items.TOTEM_OF_UNDYING) {
+            if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
                     ignoring--;
                 } else {
