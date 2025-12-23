@@ -47,12 +47,14 @@ public class Logic {
         if (totemOnOffhand()) {
             if (ModConfig.get().replenishGeneralItem){
                 // replenish item if totem on offhand
-                if (mainhandStack.getCount()==mainhandStack.getMaxCount()) return; // dont need to replenish
+                if (mainhandStack.getCount()==mainhandStack.getMaxCount()||mainhandStack.getCount()>8) return; // dont need to replenish
                 int replenishSlot = getSlotWithSpareItem(mainhandStack.getItem(),0);
                 if (replenishSlot<=8) return; // cant replenish
                 int hotslot = player.getInventory().selectedSlot + 36;
                 Packets.clickItem(hotslot, ItemStack.EMPTY,true);
+                Packets.sendNull(2);
                 Packets.doubleClickItem(hotslot,mainhandStack,true);
+                Packets.sendNull(2);
                 mainhandStack.setCount(Math.min(mainhandStack.getMaxCount(),getItemCount(mainhandStack.getItem(),false))); //update content
                 Packets.clickItem(hotslot, mainhandStack,true);
                 Packets.sendNull();
@@ -139,7 +141,7 @@ public class Logic {
         if (fromSlot < 9) {
             // hotbar case
             // Select Totem Slot
-            Packets.selectHotbarSlot(fromSlot,false);
+            Packets.selectHotbarSlot(fromSlot,true);
 
             // Swap Totem to Offhand
             Packets.sendPacket(new PlayerActionC2SPacket(
@@ -155,7 +157,7 @@ public class Logic {
             Packets.sendNull();
 
         } else {
-            Packets.swapItem(fromSlot,40,false);
+            Packets.swapItem(fromSlot,40,true);
             Packets.sendNull();
         }
     }

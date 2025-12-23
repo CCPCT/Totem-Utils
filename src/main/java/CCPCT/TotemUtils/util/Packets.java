@@ -99,6 +99,11 @@ public class Packets implements ClientModInitializer {
         sendPacket(new UpdateSelectedSlotC2SPacket(slot),delay);
 
     }
+    public static void sendNull(int n){
+        for (int i=0;i<n;i++){
+            sendPacket(null,true);
+        }
+    }
 
     public static void sendNull(){
         sendPacket(null,true);
