@@ -22,14 +22,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings("unused")
 public class InventoryMixin {
-    @Mixin(MinecraftClient.class)
-    public static class OnOpenInventory {
-        @Inject(method = "setScreen", at = @At("TAIL"))
-        private void onSetScreen(Screen screen, CallbackInfo ci) {
-            if (!(screen instanceof InventoryScreen && ModConfig.get().autoAimTotem && !Logic.totemOnOffhand())) return;
-            TotemUtilsClient.moveMouseToTotem = true;
-        }
-    }
+//    @Mixin(MinecraftClient.class)
+//    public static class OnOpenInventory {
+//        @Inject(method = "setScreen", at = @At("TAIL"))
+//        private void onSetScreen(Screen screen, CallbackInfo ci) {
+//            if (!(screen instanceof InventoryScreen && ModConfig.get().autoAimTotem && !Logic.totemOnOffhand())) return;
+//            TotemUtilsClient.moveMouseToTotem = true;
+//        }
+//    }
 
     @Mixin(HandledScreen.class)
     public abstract static class HandledScreenMixin<T extends ScreenHandler> {
@@ -49,8 +49,9 @@ public class InventoryMixin {
             MinecraftClient client = MinecraftClient.getInstance();
             double scale = client.getWindow().getScaleFactor();
             long window = client.getWindow().getHandle();
-
-            Slot totemSlot = handler.slots.get(Logic.getSlotWithSpareTotem(0));
+            int replanishTotem = Logic.getSlotWithSpareTotem(0);
+            if (replanishTotem<=8) return;
+            Slot totemSlot = handler.slots.get(replanishTotem);
             int totemX = x+totemSlot.x;
             int totemY = y+totemSlot.y;
             System.out.println(TotemUtilsClient.startX);

@@ -6,7 +6,6 @@
   "client": [
     "RenderOverlay$InGameHudMixin",
     "onTotemPopMixin",
-    "InventoryMixin$OnOpenInventory",
     "InventoryMixin$HandledScreenMixin"
   ],
   "injectors": {
