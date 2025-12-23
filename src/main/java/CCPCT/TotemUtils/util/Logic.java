@@ -45,7 +45,7 @@ public class Logic {
         if (totemOnOffhand()) {
             if (ModConfig.get().replenishGeneralItem){
                 // replenish item if totem on offhand
-                if (mainhandStack.getCount()==mainhandStack.getMaxCount()) return; // dont need to replenish
+                if (mainhandStack.getCount()==mainhandStack.getMaxCount()||mainhandStack.getCount()>8) return; // dont need to replenish
                 int replenishSlot = getSlotWithSpareItem(mainhandStack.getItem(),0);
                 if (replenishSlot<=8) return; // cant replenish
                 int hotslot = player.getInventory().getSelectedSlot() + 36;
