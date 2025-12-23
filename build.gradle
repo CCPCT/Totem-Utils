@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 def targetVersion = project.hasProperty('targetVersion') ? project.getProperty('targetVersion') : '1.21.5'
@@ -101,5 +102,13 @@ publishing {
         // Notice: This block does NOT have the same function as the block in the top level.
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
+    }
+}
+
+modrinth {
+    dependencies { // A special DSL for creating dependencies
+        required.project "fabric-api" // Creates a new required dependency on Fabric API
+        required.project "modmenu"
+        required.project "cloth-config"
     }
 }

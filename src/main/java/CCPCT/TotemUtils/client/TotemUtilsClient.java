@@ -12,6 +12,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
 
 import CCPCT.TotemUtils.util.*;
@@ -21,6 +23,13 @@ public class TotemUtilsClient implements ClientModInitializer {
     public static KeyBinding swapTotemKey;
     public static KeyBinding configScreenKey;
     public static boolean checkedUpdate = false;
+
+    // mixin var
+    public static int startX;
+    public static int startY;
+    public static DefaultedList<Slot> slots;
+    public static boolean moveMouseToTotem = false;
+
     @Override
     public void onInitializeClient() {
 
