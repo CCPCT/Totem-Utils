@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
@@ -29,6 +31,7 @@ public class TotemUtilsClient implements ClientModInitializer {
     public static int startY;
     public static DefaultedList<Slot> slots;
     public static boolean moveMouseToTotem = false;
+    public static boolean popped = false;
 
     @Override
     public void onInitializeClient() {
@@ -51,7 +54,7 @@ public class TotemUtilsClient implements ClientModInitializer {
 
         // Register client tick listener
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (swapTotemKey.isPressed()) {
+            if (swapTotemKey.wasPressed()) {
                 // swap totem
                 Logic.refillTotem();
             }
@@ -60,6 +63,15 @@ public class TotemUtilsClient implements ClientModInitializer {
                 // open config
                 MinecraftClient.getInstance().setScreen(configScreen.getConfigScreen(MinecraftClient.getInstance().currentScreen));
             }
+        });
+
+        ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
+                if (swapTotemKey.matchesKey(key, scancode)) {
+                    System.out.println("pressed totem key in inv");
+                    moveMouseToTotem = true;
+                }
+            });
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {

@@ -4,8 +4,9 @@
   "package": "CCPCT.TotemUtils.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "onTotemPopMixin",
     "InventoryMixin$HandledScreenMixin",
+    "InventoryMixin$OnOpenInventory",
+    "onTotemPopMixin",
     "RenderOverlay$InGameHudMixin"
   ],
   "injectors": {

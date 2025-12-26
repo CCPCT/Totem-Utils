@@ -72,7 +72,7 @@ public class onTotemPopMixin {
             return;
 
         //confirm pop
-        TotemUtilsClient.moveMouseToTotem = true;
+        TotemUtilsClient.popped = true;
 
         // auto totem
         if (ModConfig.get().autoTotem) {

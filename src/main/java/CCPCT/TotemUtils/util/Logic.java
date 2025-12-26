@@ -4,9 +4,9 @@ import CCPCT.TotemUtils.config.ModConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.Item;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
@@ -24,10 +24,9 @@ public class Logic {
         MinecraftClient client = MinecraftClient.getInstance();
         PlayerEntity player = client.player;
         if (player == null) return;
-
         ItemStack mainhandStack = player.getMainHandStack();
-        int slot = Logic.getSlotWithSpareTotem(0);
 
+        int slot = Logic.getSlotWithSpareTotem(0);
         // replenish main hand
         if (ModConfig.get().replenishMainHandTotem && mainhandStack.isEmpty()){
             if (slot==-1) {
@@ -42,19 +41,16 @@ public class Logic {
             } // dont allow moving 2 items by pressing 1 button!!
         }
 
-
         // move totem to offhand
         if (totemOnOffhand()) {
             if (ModConfig.get().replenishGeneralItem){
                 // replenish item if totem on offhand
                 if (mainhandStack.getCount()==mainhandStack.getMaxCount()||mainhandStack.getCount()>8) return; // dont need to replenish
-                int replenishSlot = getSlotWithSpareItem(mainhandStack.getItem(),0);
+                int replenishSlot = getSlotWithItem(mainhandStack.getItem(),0);
                 if (replenishSlot<=8) return; // cant replenish
                 int hotslot = player.getInventory().selectedSlot + 36;
                 Packets.clickItem(hotslot, ItemStack.EMPTY,true);
-                Packets.sendNull(2);
                 Packets.doubleClickItem(hotslot,mainhandStack,true);
-                Packets.sendNull(2);
                 mainhandStack.setCount(Math.min(mainhandStack.getMaxCount(),getItemCount(mainhandStack.getItem(),false))); //update content
                 Packets.clickItem(hotslot, mainhandStack,true);
                 Packets.sendNull();
@@ -63,6 +59,7 @@ public class Logic {
             }
             return;
         }
+
         Chat.send("§aRefilled offhand",true);
         if (slot == -1) {
             Chat.send("§cNo Totem!!",true);
@@ -74,8 +71,9 @@ public class Logic {
     public static boolean totemOnOffhand(){
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return false;
-        return player.getInventory().offHand.getFirst().getItem() == Items.TOTEM_OF_UNDYING;
+        return player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING;
     }
+
     public static int getTotemCount() {
         return getItemCount(Items.TOTEM_OF_UNDYING, true);
     }
@@ -86,30 +84,29 @@ public class Logic {
         if (player == null) return -1;
         //take from hotbar
         int count = 0;
-        for (int i = 0; i < player.getInventory().main.size(); i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
             if (!stack.isEmpty() && stack.getItem() == item) {
                 count+=stack.getCount();
             }
+
         }
         // count offhand
-        ItemStack stack = player.getInventory().offHand.getFirst();
-        if (offhand && !stack.isEmpty() && stack.getItem() == item) count+=stack.getCount();
+        ItemStack stack = player.getOffHandStack();
+        if (offhand && !stack.isEmpty() && stack.getItem() == item) count+=stack.getCount();;
 
         return count;
     }
 
     public static int getSlotWithSpareTotem(int ignoring) {
-        return getSlotWithSpareItem(Items.TOTEM_OF_UNDYING, ignoring);
+        return getSlotWithItem(Items.TOTEM_OF_UNDYING, ignoring);
     }
 
-    public static int getSlotWithSpareItem(Item item, int ignoring) {
-        //prefer take from inventory
+    public static int getSlotWithItem(Item item, int ignoring) {        //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
-        for (int i = 9; i < player.getInventory().main.size(); i++) {
-            ItemStack stack = player.getInventory().main.get(i);
-
+        for (int i = 9; i < player.getInventory().size(); i++) {
+            ItemStack stack = player.getInventory().getStack(i);
             if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
                     ignoring--;
@@ -119,10 +116,31 @@ public class Logic {
             }
         }
         //take from hotbar
-        for (int i = 0; i < 9; i++) {
-            ItemStack stack = player.getInventory().main.get(i);
+        return getSlotWithItemInHotbar(item,ignoring);
+    }
 
+    public static int getSlotWithItemInHotbar(Item item, int ignoring){
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = player.getInventory().getStack(i);
             if (!stack.isEmpty() && stack.getItem() == item) {
+                if (ignoring > 0){
+                    ignoring--;
+                } else {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int getEmptySlotInHotbar(int ignoring) {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = player.getInventory().getStack(i);
+            if (stack.isEmpty()) {
                 if (ignoring > 0){
                     ignoring--;
                 } else {
@@ -141,7 +159,7 @@ public class Logic {
         if (fromSlot < 9) {
             // hotbar case
             // Select Totem Slot
-            Packets.selectHotbarSlot(fromSlot,true);
+            Packets.selectHotbarSlot(fromSlot,false);
 
             // Swap Totem to Offhand
             Packets.sendPacket(new PlayerActionC2SPacket(
@@ -157,7 +175,7 @@ public class Logic {
             Packets.sendNull();
 
         } else {
-            Packets.swapItem(fromSlot,40,true);
+            Packets.swapItem(fromSlot,40,false);
             Packets.sendNull();
         }
     }

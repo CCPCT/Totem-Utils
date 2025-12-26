@@ -61,7 +61,7 @@ public class configScreen extends Screen {
 
         generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Replenish main hand totem"),ModConfig.get().replenishMainHandTotem)
                 .setDefaultValue(false)
-                .setTooltip(Text.literal("Replenish main hand totem if popped or use hotkey, and nothing on mainhand"))
+                .setTooltip(Text.literal("also replace main hand totem if popped or use hotkey"))
                 .setSaveConsumer(newValue -> ModConfig.get().replenishMainHandTotem = newValue)
                 .build());
 
@@ -71,10 +71,10 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().replenishGeneralItem = newValue)
                 .build());
 
-        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Curser move to totem"),ModConfig.get().autoAimTotem)
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Curser auto snap on totem"),ModConfig.get().snapOnTotem)
                 .setDefaultValue(false)
-                .setTooltip(Text.literal("curser auto moves on totem when open inventory without totem on offhand\nwill also move to next totem if popped in inventory"))
-                .setSaveConsumer(newValue -> ModConfig.get().autoAimTotem = newValue)
+                .setTooltip(Text.literal("curser auto moves to totem when open inventory after popped\nwill also snap when pressed hotkey"))
+                .setSaveConsumer(newValue -> ModConfig.get().snapOnTotem = newValue)
                 .build());
 
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())
@@ -98,25 +98,25 @@ public class configScreen extends Screen {
                 .build());
 
         soundTab.addEntry(entryBuilder.startStrField(Text.literal("Sound Event"), ModConfig.get().customSoundName)
-            .setTooltip(Text.literal("Enter the sound ID (e.g., minecraft:entity.player.levelup)"))
-            .setDefaultValue("minecraft:item.shield.break")
-            .setSaveConsumer(newValue -> ModConfig.get().customSoundName = newValue)
-            .build());
+                .setTooltip(Text.literal("Enter the sound ID (e.g., minecraft:entity.player.levelup)"))
+                .setDefaultValue("minecraft:item.shield.break")
+                .setSaveConsumer(newValue -> ModConfig.get().customSoundName = newValue)
+                .build());
 
         soundTab.addEntry(entryBuilder.startFloatField(Text.literal("Volume"), ModConfig.get().customSoundVolume)
-            .setTooltip(Text.literal("Set the volume (1.5 = 150%)"))
-            .setMin(0.0f)
-            .setMax(10.0f)
-            .setDefaultValue(1.0f)
-            .setSaveConsumer(newValue -> ModConfig.get().customSoundVolume = newValue)
-            .build());
+                .setTooltip(Text.literal("Set the volume (1.5 = 150%)"))
+                .setMin(0.0f)
+                .setMax(10.0f)
+                .setDefaultValue(1.0f)
+                .setSaveConsumer(newValue -> ModConfig.get().customSoundVolume = newValue)
+                .build());
 
         //screen tab
         screenTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Enable Overlay"),ModConfig.get().totemPopScreen)
-            .setDefaultValue(false)
-            .setTooltip(Text.literal("Render screen vintage overlay effect when popped totem"))
-            .setSaveConsumer(newValue -> ModConfig.get().totemPopScreen = newValue)
-            .build());
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("Render screen vintage overlay effect when popped totem"))
+                .setSaveConsumer(newValue -> ModConfig.get().totemPopScreen = newValue)
+                .build());
 
         screenTab.addEntry(builder.entryBuilder()
                 .startColorField(Text.literal("Color"), ModConfig.get().totemPopScreenColour)
