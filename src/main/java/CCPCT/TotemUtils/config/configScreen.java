@@ -71,6 +71,12 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().replenishGeneralItem = newValue)
                 .build());
 
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Curser move to totem"),ModConfig.get().autoAimTotem)
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("curser auto moves on totem when open inventory without totem on offhand\nwill also move to next totem if popped in inventory"))
+                .setSaveConsumer(newValue -> ModConfig.get().autoAimTotem = newValue)
+                .build());
+
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())
                 .setTooltip(Text.literal("Recommanded to modify this option in the option menu"))
                 .setDefaultValue("key.keyboard.h")

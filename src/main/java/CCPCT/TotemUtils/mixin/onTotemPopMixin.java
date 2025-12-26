@@ -1,5 +1,6 @@
 package CCPCT.TotemUtils.mixin;
 
+import CCPCT.TotemUtils.client.TotemUtilsClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -69,6 +70,9 @@ public class onTotemPopMixin {
         PlayerEntity player = client.player;
         if (player == null)
             return;
+
+        //confirm pop
+        TotemUtilsClient.moveMouseToTotem = true;
 
         // auto totem
         if (ModConfig.get().autoTotem) {

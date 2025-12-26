@@ -99,11 +99,11 @@ public class Logic {
         return count;
     }
 
-    private static int getSlotWithSpareTotem(int ignoring) {
+    public static int getSlotWithSpareTotem(int ignoring) {
         return getSlotWithSpareItem(Items.TOTEM_OF_UNDYING, ignoring);
     }
 
-    private static int getSlotWithSpareItem(Item item, int ignoring) {
+    public static int getSlotWithSpareItem(Item item, int ignoring) {
         //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
