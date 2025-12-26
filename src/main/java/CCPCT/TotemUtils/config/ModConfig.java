@@ -14,7 +14,7 @@ public class ModConfig {
     public boolean chatfeedback = true;
     public boolean replenishMainHandTotem = false;
     public boolean replenishGeneralItem = false;
-    public boolean autoAimTotem = false;
+    public boolean snapOnTotem = false;
 
     public boolean customSound = true;
     public String customSoundName = "minecraft:item.shield.break";

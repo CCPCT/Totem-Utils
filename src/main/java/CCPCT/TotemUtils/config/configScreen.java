@@ -71,10 +71,10 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().replenishGeneralItem = newValue)
                 .build());
 
-        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Curser move to totem"),ModConfig.get().autoAimTotem)
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Curser auto snap on totem"),ModConfig.get().snapOnTotem)
                 .setDefaultValue(false)
-                .setTooltip(Text.literal("curser auto moves on totem when open inventory without totem on offhand\nwill also move to next totem if popped in inventory"))
-                .setSaveConsumer(newValue -> ModConfig.get().autoAimTotem = newValue)
+                .setTooltip(Text.literal("curser auto moves to totem when open inventory after popped\nwill also snap when pressed hotkey"))
+                .setSaveConsumer(newValue -> ModConfig.get().snapOnTotem = newValue)
                 .build());
 
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())

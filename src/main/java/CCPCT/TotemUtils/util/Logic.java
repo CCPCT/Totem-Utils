@@ -46,7 +46,7 @@ public class Logic {
             if (ModConfig.get().replenishGeneralItem){
                 // replenish item if totem on offhand
                 if (mainhandStack.getCount()==mainhandStack.getMaxCount()||mainhandStack.getCount()>8) return; // dont need to replenish
-                int replenishSlot = getSlotWithSpareItem(mainhandStack.getItem(),0);
+                int replenishSlot = getSlotWithItem(mainhandStack.getItem(),0);
                 if (replenishSlot<=8) return; // cant replenish
                 int hotslot = player.getInventory().getSelectedSlot() + 36;
                 Packets.clickItem(hotslot, ItemStack.EMPTY,true);
@@ -93,21 +93,20 @@ public class Logic {
         }
         // count offhand
         ItemStack stack = player.getOffHandStack();
-        if (!stack.isEmpty() && stack.getItem() == item) count+=stack.getCount();;
+        if (offhand && !stack.isEmpty() && stack.getItem() == item) count+=stack.getCount();;
 
         return count;
     }
 
     public static int getSlotWithSpareTotem(int ignoring) {
-        return getSlotWithSpareItem(Items.TOTEM_OF_UNDYING, ignoring);
+        return getSlotWithItem(Items.TOTEM_OF_UNDYING, ignoring);
     }
 
-    public static int getSlotWithSpareItem(Item item, int ignoring) {        //prefer take from inventory
+    public static int getSlotWithItem(Item item, int ignoring) {        //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
         for (int i = 9; i < player.getInventory().size(); i++) {
             ItemStack stack = player.getInventory().getStack(i);
-
             if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
                     ignoring--;
@@ -117,10 +116,31 @@ public class Logic {
             }
         }
         //take from hotbar
+        return getSlotWithItemInHotbar(item,ignoring);
+    }
+
+    public static int getSlotWithItemInHotbar(Item item, int ignoring){
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
         for (int i = 0; i < 9; i++) {
             ItemStack stack = player.getInventory().getStack(i);
-
             if (!stack.isEmpty() && stack.getItem() == item) {
+                if (ignoring > 0){
+                    ignoring--;
+                } else {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int getEmptySlotInHotbar(int ignoring) {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+        if (player == null) return -1;
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = player.getInventory().getStack(i);
+            if (stack.isEmpty()) {
                 if (ignoring > 0){
                     ignoring--;
                 } else {
