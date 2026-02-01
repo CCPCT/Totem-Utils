@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -35,8 +37,14 @@ public class Logic {
             if (slot >= 9) {
                 // move totem from inv to mainhand
                 Chat.send("§aRefilled mainhand", true);
-                Packets.swapItem(slot, player.getInventory().getSelectedSlot(), true);
+                int selectedSlot = player.getInventory().getSelectedSlot();
+                Packets.swapItem(slot, selectedSlot, true);
                 Packets.sendNull();
+                if (ModConfig.get().forceClientUpdate) {
+                    ScreenHandler screenHandler = player.currentScreenHandler;
+                    screenHandler.getSlot(selectedSlot+36).setStackNoCallbacks(screenHandler.getSlot(slot).getStack());
+                    screenHandler.getSlot(slot).setStackNoCallbacks(ItemStack.EMPTY);
+                }
                 slot = Logic.getSlotWithSpareTotem(1);
             } // dont allow moving 2 items by pressing 1 button!!
         }
@@ -54,7 +62,6 @@ public class Logic {
                 mainhandStack.setCount(Math.min(mainhandStack.getMaxCount(),getItemCount(mainhandStack.getItem(),false))); //update content
                 Packets.clickItem(hotslot, mainhandStack,true);
                 Packets.sendNull();
-
 
             }
             return;
@@ -177,6 +184,11 @@ public class Logic {
         } else {
             Packets.swapItem(fromSlot,40,false);
             Packets.sendNull();
+            if (ModConfig.get().forceClientUpdate) {
+                ScreenHandler screenHandler = player.currentScreenHandler;
+                screenHandler.getSlot(45).setStackNoCallbacks(screenHandler.getSlot(fromSlot).getStack());
+                screenHandler.getSlot(fromSlot).setStackNoCallbacks(ItemStack.EMPTY);
+            }
         }
     }
     public static void stopTotemSound() {

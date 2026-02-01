@@ -77,6 +77,12 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().snapOnTotem = newValue)
                 .build());
 
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Force Client Update Inventory"),ModConfig.get().forceClientUpdate)
+                .setDefaultValue(false)
+                .setTooltip(Text.literal("Ignore server sync packet and update anyways\nmay break with other item replanish mods...\nused for server that doesnt return swap success packet"))
+                .setSaveConsumer(newValue -> ModConfig.get().forceClientUpdate = newValue)
+                .build());
+
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())
                 .setTooltip(Text.literal("Recommanded to modify this option in the option menu"))
                 .setDefaultValue("key.keyboard.h")
