@@ -30,7 +30,9 @@ public class Logic {
 
         int slot = Logic.getSlotWithSpareTotem(0);
         // replenish main hand
-        if (ModConfig.get().replenishMainHandTotem && mainhandStack.isEmpty()){
+        if (ModConfig.get().replenishMainHandTotem && mainhandStack.isEmpty() && totemOnOffhand()){
+            // dont allow moving 2 items by pressing 1 button!!
+            // if totem not on offhand refill offhand first
             if (slot==-1) {
                 Chat.send("§cNo totem!", true);
             }
@@ -46,7 +48,7 @@ public class Logic {
                     screenHandler.getSlot(slot).setStackNoCallbacks(ItemStack.EMPTY);
                 }
                 slot = Logic.getSlotWithSpareTotem(1);
-            } // dont allow moving 2 items by pressing 1 button!!
+            }
         }
 
         // move totem to offhand
