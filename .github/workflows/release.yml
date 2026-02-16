@@ -17,6 +17,9 @@ jobs:
       matrix:
         # todo Define your versions here
         mc_version: ["1.21.2", "1.21.4", "1.21.6"]
+    defaults:
+      run:
+        working-directory: Totem-Utils
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
