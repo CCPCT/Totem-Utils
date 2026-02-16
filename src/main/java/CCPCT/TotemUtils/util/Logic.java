@@ -44,7 +44,7 @@ public class Logic {
                 if (ModConfig.get().smartReplanishHotbar) {
                     if (smartTotemSlot==-1) break mainhand;
                 } else {
-                    if (!player.getInventory().getSelectedStack().isEmpty()) break mainhand;
+                    if (!getMainhandStack().isEmpty()) break mainhand;
                 }
 
                 if (slot <= 35 && slot >= 0) {
@@ -182,5 +182,11 @@ public class Logic {
         if (client.player != null) {
             client.player.playSound(SoundEvent.of(Identifier.of(ModConfig.get().customSoundName)),ModConfig.get().customSoundVolume,1.0f);
         }
+    }
+
+    public static ItemStack getMainhandStack() {
+        if (MinecraftClient.getInstance().player == null) return ItemStack.EMPTY;
+        PlayerInventoryMixin inventory = ((PlayerInventoryMixin) MinecraftClient.getInstance().player.getInventory());
+        return inventory.getMain().get(inventory.getSelectedSlot());
     }
 }

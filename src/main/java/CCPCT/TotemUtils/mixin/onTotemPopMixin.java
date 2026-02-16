@@ -73,7 +73,7 @@ public class onTotemPopMixin {
         TotemUtilsClient.popped = true;
 
         // store last popped slot
-        if (ModConfig.get().smartReplanishHotbar && (player.getInventory().getSelectedStack().isEmpty()||player.getInventory().getSelectedStack().getItem()==Items.TOTEM_OF_UNDYING)) {
+        if (ModConfig.get().smartReplanishHotbar && (Logic.getMainhandStack().isEmpty()||Logic.getMainhandStack().getItem()==Items.TOTEM_OF_UNDYING)) {
             int slot = ((PlayerInventoryMixin)player.getInventory()).getSelectedSlot();
             if (ModConfig.get().smartReplanishslot==-1 || ModConfig.get().smartReplanishslot==slot) {
                 Logic.smartTotemSlot = slot;
