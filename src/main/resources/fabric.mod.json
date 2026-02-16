@@ -14,7 +14,7 @@
   "entrypoints": {
     "client": [
       "CCPCT.TotemUtils.client.TotemUtilsClient",
-      "CCPCT.TotemUtils.util.Packets"
+      "CCPCT.TotemUtils.util.PacketHandler"
     ],
     "modmenu": [
       "CCPCT.TotemUtils.ModMenu.ModMenu"
@@ -24,9 +24,10 @@
     "TotemUtils.mixin.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "fabricloader": "*",
     "fabric": "*",
-    "minecraft": ">=1.21.6 <=1.21.8",
+    "minecraft": "${minecraft_range}",
     "java": ">=21",
     "modmenu": "*",
     "cloth-config": "*"

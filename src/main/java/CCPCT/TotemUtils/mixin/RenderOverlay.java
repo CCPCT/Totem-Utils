@@ -1,5 +1,6 @@
 package CCPCT.TotemUtils.mixin;
 
+import CCPCT.TotemUtils.config.ModConfig;
 import CCPCT.TotemUtils.util.Logic;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -9,7 +10,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import CCPCT.TotemUtils.config.ModConfig;
 @SuppressWarnings("unused")
 public class RenderOverlay {
     @Mixin(InGameHud.class)

@@ -5,8 +5,8 @@ import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 
 public class configScreen extends Screen {
 
@@ -77,10 +77,17 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().snapOnTotem = newValue)
                 .build());
 
-        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Force Client Update Inventory"),ModConfig.get().forceClientUpdate)
+        generalTab.addEntry(entryBuilder.startBooleanToggle(Text.literal("Smart replenish totem in hotbar"),ModConfig.get().smartReplanishHotbar)
                 .setDefaultValue(false)
-                .setTooltip(Text.literal("Ignore server sync packet and update anyways\nmay break with other item replanish mods...\nused for server that doesnt return swap success packet"))
-                .setSaveConsumer(newValue -> ModConfig.get().forceClientUpdate = newValue)
+                .setTooltip(Text.literal("replenish even when picked up item/ not holding empty slot\nreplanish last hotbar popped totem slot"))
+                .setSaveConsumer(newValue -> ModConfig.get().smartReplanishHotbar = newValue)
+                .build());
+
+        generalTab.addEntry(entryBuilder.startIntField(Text.literal("Smart replenish totem slot"),ModConfig.get().smartReplanishslot)
+                .setDefaultValue(-1)
+                .setMin(-1).setMax(8)
+                .setTooltip(Text.literal("Manually select which slot (0-8) to replace. -1 to auto detect\nRequire Smart replenish enabled\nRecommend to manually input as auto detect may not be most accurate"))
+                .setSaveConsumer(newValue -> ModConfig.get().smartReplanishslot = newValue)
                 .build());
 
         generalTab.addEntry(entryBuilder.startStrField(Text.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getBoundKeyTranslationKey())

@@ -1,27 +1,23 @@
 package CCPCT.TotemUtils.client;
 
-import static CCPCT.TotemUtils.config.ModConfig.load;
-
-import CCPCT.TotemUtils.config.ModConfig;
+import CCPCT.TotemUtils.config.configScreen;
+import CCPCT.TotemUtils.util.Logic;
+import CCPCT.TotemUtils.util.PacketHandler;
 import net.fabricmc.api.ClientModInitializer;
-
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
 
-import CCPCT.TotemUtils.util.*;
-import CCPCT.TotemUtils.config.configScreen;
+import static CCPCT.TotemUtils.config.ModConfig.load;
 
 public class TotemUtilsClient implements ClientModInitializer {
     public static KeyBinding swapTotemKey;
@@ -29,9 +25,6 @@ public class TotemUtilsClient implements ClientModInitializer {
     public static boolean checkedUpdate = false;
 
     // mixin var
-    public static int startX;
-    public static int startY;
-    public static DefaultedList<Slot> slots;
     public static boolean moveMouseToTotem = false;
     public static boolean popped = false;
 
@@ -66,6 +59,10 @@ public class TotemUtilsClient implements ClientModInitializer {
                 // open config
                 MinecraftClient.getInstance().setScreen(configScreen.getConfigScreen(MinecraftClient.getInstance().currentScreen));
             }
+
+            if (client.player == null || client.player.isCreative() || client.player.isSpectator() || !client.player.isAlive()) {
+                Logic.resetStatus();
+            }
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
@@ -78,31 +75,14 @@ public class TotemUtilsClient implements ClientModInitializer {
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            if (checkedUpdate) return;
-            checkedUpdate = true;
-            String[] mcVersion = FabricLoader.getInstance()
-                    .getModContainer("totemutils").get()
-                    .getMetadata().getVersion().getFriendlyString()
-                    .split("-");
-            String newestVersion = VersionChecker.getNewestVersion(mcVersion[1]);
+            //join server/ world
+            Logic.resetStatus();
+        });
 
-            if (newestVersion == null){
-                Chat.send("§cFailed to check for updates.", false);
-                return;
-            }
-
-            if (newestVersion.isEmpty()){
-                Chat.send("§cFound no compatible version", false);
-                return;
-            }
-
-            if (VersionChecker.compareVersions(newestVersion, mcVersion[0]) > 0) {
-                Chat.send("Mod update available: " + newestVersion + " for " + mcVersion[1],false);
-                Chat.send("Links to download:",false);
-                Chat.link("[Github]", "https://github.com/CCPCT/Totem-Utils/releases");
-                Chat.link("[Modrinth]", "https://modrinth.com/mod/totemutils");
-            } else {
-                Chat.send("§aMod is up to date",true);
+        ClientEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            if (entity == MinecraftClient.getInstance().player) {
+                // You just arrived in a new world/hub
+                Logic.resetStatus();
             }
         });
     }

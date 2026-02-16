@@ -1,8 +1,8 @@
 package CCPCT.TotemUtils.config;
 
-import net.fabricmc.loader.api.FabricLoader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +15,8 @@ public class ModConfig {
     public boolean replenishMainHandTotem = false;
     public boolean replenishGeneralItem = false;
     public boolean snapOnTotem = false;
-    public boolean forceClientUpdate = false;
+    public boolean smartReplanishHotbar = false;
+    public int smartReplanishslot = -1;
 
     public boolean customSound = true;
     public String customSoundName = "minecraft:item.shield.break";
