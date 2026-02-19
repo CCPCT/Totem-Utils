@@ -6,6 +6,7 @@ import CCPCT.TotemUtils.util.Chat;
 import CCPCT.TotemUtils.util.Logic;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.Window;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
-public class onTotemPopMixin {
+public class OnTotemPopMixin {
 
     @Unique
     public int overlaytickleft = 0;
@@ -38,7 +39,7 @@ public class onTotemPopMixin {
 
         if (ModConfig.get().totemCountTime<0){
             Logic.totemCountActive = true;
-            Logic.totemCountValue = Logic.getTotemCount();
+            Logic.totemCountValue = Logic.getTotemCount(false);
         } else if (Logic.totemCountActive){
             if (counttickleft <= 0){
                 Logic.totemCountActive = false;
@@ -62,8 +63,7 @@ public class onTotemPopMixin {
         if (!floatingItem.isOf(Items.TOTEM_OF_UNDYING))
             return;
 
-        GameRenderer gameRenderer = (GameRenderer) ((Object) this);
-        MinecraftClient client = gameRenderer.getClient();
+        MinecraftClient client = MinecraftClient.getInstance();
 
         PlayerEntity player = client.player;
         if (player == null)
@@ -71,6 +71,10 @@ public class onTotemPopMixin {
 
         //confirm pop
         TotemUtilsClient.popped = true;
+
+        if (TotemUtilsClient.RenderHelper.width == 0) {
+            TotemUtilsClient.updateRenderCache();
+        }
 
         // store last popped slot
         if (ModConfig.get().smartReplanishHotbar && (Logic.getMainhandStack().isEmpty()||Logic.getMainhandStack().getItem()==Items.TOTEM_OF_UNDYING)) {

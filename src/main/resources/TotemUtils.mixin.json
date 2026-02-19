@@ -6,9 +6,9 @@
   "client": [
     "InventoryMixin$HandledScreenMixin",
     "InventoryMixin$OnOpenInventory",
-    "onTotemPopMixin",
-    "PlayerInventoryMixin",
-    "RenderOverlay$InGameHudMixin"
+    "OnRenderMixin$InGameHudMixin",
+    "OnTotemPopMixin",
+    "PlayerInventoryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

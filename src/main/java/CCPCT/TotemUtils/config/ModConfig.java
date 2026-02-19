@@ -1,5 +1,6 @@
 package CCPCT.TotemUtils.config;
 
+import CCPCT.TotemUtils.client.TotemUtilsClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -65,6 +66,7 @@ public class ModConfig {
     }
 
     public static void save() {
+        TotemUtilsClient.updateRenderCache();
         try {
             Files.writeString(CONFIG_PATH, GSON.toJson(get()));
         } catch (IOException e) {

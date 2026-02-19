@@ -1,5 +1,6 @@
 package CCPCT.TotemUtils.client;
 
+import CCPCT.TotemUtils.config.ModConfig;
 import CCPCT.TotemUtils.config.configScreen;
 import CCPCT.TotemUtils.util.Logic;
 import CCPCT.TotemUtils.util.PacketHandler;
@@ -13,6 +14,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.Window;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
@@ -27,6 +29,27 @@ public class TotemUtilsClient implements ClientModInitializer {
     // mixin var
     public static boolean moveMouseToTotem = false;
     public static boolean popped = false;
+
+    public static class RenderHelper{
+        public static int width = 0;
+        public static int height;
+        public static int argb;
+        public static int centerX;
+        public static int centerY;
+        public static int holeHeight;
+        public static int holeWidth;
+    }
+
+    public static void updateRenderCache(){
+        Window window = MinecraftClient.getInstance().getWindow();
+        TotemUtilsClient.RenderHelper.width = window.getScaledWidth();
+        TotemUtilsClient.RenderHelper.height = window.getScaledHeight();
+        RenderHelper.argb = (ModConfig.get().totemPopScreenAlpha << 24) | ModConfig.get().totemPopScreenColour;
+        RenderHelper.centerX = RenderHelper.width / 2;
+        RenderHelper.centerY = RenderHelper.height / 2;
+        RenderHelper.holeHeight = RenderHelper.height - ModConfig.get().totemPopScreenWidth;
+        RenderHelper.holeWidth = RenderHelper.width - ModConfig.get().totemPopScreenWidth;
+    }
 
     @Override
     public void onInitializeClient() {

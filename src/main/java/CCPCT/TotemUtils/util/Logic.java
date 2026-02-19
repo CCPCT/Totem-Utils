@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
@@ -16,7 +17,7 @@ public class Logic {
     public static boolean overlayactive = false;
     public static boolean totemCountActive = false;
     public static int totemCountValue = 0;
-
+    public static int totemCount = 0;
     public static int smartTotemSlot = -1;
 
     public static void resetStatus() {
@@ -91,23 +92,26 @@ public class Logic {
         return player.currentScreenHandler.getSlot(45).getStack().getItem() == Items.TOTEM_OF_UNDYING;
     }
 
-    public static int getTotemCount() {
-        return getItemCount(Items.TOTEM_OF_UNDYING, true);
+    public static int getTotemCount(boolean refresh) {
+        if (refresh) {
+            getItemCount(Items.TOTEM_OF_UNDYING);
+        }
+        return totemCount;
     }
 
-    public static int getItemCount(Item item, boolean offhand) {
+    public static void getItemCount(Item item) {
         //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) return -1;
+        if (player == null) return;
         //take from hotbar
         int count = 0;
-        for (int i = 0; i <= 45; i++) {
-            ItemStack stack = player.currentScreenHandler.getSlot(i).getStack();
+        for (Slot slot : player.currentScreenHandler.slots) {
+            ItemStack stack = slot.getStack();
             if (!stack.isEmpty() && stack.getItem() == item) {
                 count+=stack.getCount();
             }
         }
-        return count;
+        totemCount=count;
     }
 
     public static int getSlotWithSpareTotem(int ignoring) {
@@ -117,7 +121,7 @@ public class Logic {
     public static int getSlotWithItem(Item item, int ignoring) {        //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
-        for (int i = 9; i <= 44; i++) { //-1 to not count offhand
+        for (int i = 9, size = player.currentScreenHandler.slots.size(); i <= size; i++) { //-1 to not count offhand
             ItemStack stack = player.currentScreenHandler.getSlot(i).getStack();
             if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
