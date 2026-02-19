@@ -35,6 +35,8 @@ public class OnTotemPopMixin {
             } else {
                 overlaytickleft--;
             }
+        } else {
+            overlaytickleft = 0;
         }
 
         if (ModConfig.get().totemCountTime<0){
@@ -70,7 +72,9 @@ public class OnTotemPopMixin {
             return;
 
         //confirm pop
-        TotemUtilsClient.popped = true;
+        if (ModConfig.get().snapOnTotem) {
+            TotemUtilsClient.popped = true;
+        }
 
         if (TotemUtilsClient.RenderHelper.width == 0) {
             TotemUtilsClient.updateRenderCache();

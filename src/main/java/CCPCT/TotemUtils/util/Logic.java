@@ -1,5 +1,6 @@
 package CCPCT.TotemUtils.util;
 
+import CCPCT.TotemUtils.client.TotemUtilsClient;
 import CCPCT.TotemUtils.config.ModConfig;
 import CCPCT.TotemUtils.mixin.PlayerInventoryMixin;
 import CCPCT.TotemUtils.util.PacketHandler.Packet;
@@ -22,8 +23,11 @@ public class Logic {
 
     public static void resetStatus() {
         PacketHandler.clearPackets();
-        Logic.overlayactive = false;
+        overlayactive = false;
         smartTotemSlot = -1;
+        TotemUtilsClient.moveMouseToTotem = false;
+        TotemUtilsClient.popped = false;
+
     }
 
     public static void refillTotem() {
@@ -94,6 +98,7 @@ public class Logic {
 
     public static int getTotemCount(boolean refresh) {
         if (refresh) {
+            System.out.println("Counting totems...");
             getItemCount(Items.TOTEM_OF_UNDYING);
         }
         return totemCount;
@@ -121,7 +126,7 @@ public class Logic {
     public static int getSlotWithItem(Item item, int ignoring) {        //prefer take from inventory
         PlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return -1;
-        for (int i = 9, size = player.currentScreenHandler.slots.size(); i <= size; i++) { //-1 to not count offhand
+        for (int i = 9; i < player.currentScreenHandler.slots.size(); i++) { //-1 to not count offhand
             ItemStack stack = player.currentScreenHandler.getSlot(i).getStack();
             if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){

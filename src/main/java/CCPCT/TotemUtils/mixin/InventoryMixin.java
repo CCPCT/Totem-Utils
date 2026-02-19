@@ -51,6 +51,7 @@ public class InventoryMixin {
         private void onRender(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
             if (!TotemUtilsClient.moveMouseToTotem) return;
             TotemUtilsClient.moveMouseToTotem = false;
+            System.out.println("moved mouse to totem slot");
 
             MinecraftClient client = MinecraftClient.getInstance();
             double scale = client.getWindow().getScaleFactor();
