@@ -16,8 +16,11 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.Window;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Locale;
 
 import static CCPCT.TotemUtils.config.ModConfig.load;
 
@@ -53,21 +56,22 @@ public class TotemUtilsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        KeyBinding.Category keybindCat = KeyBinding.Category.create(Identifier.of("Totem Utils"));
 
         load();
         // Register the keybinding
         swapTotemKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Swap Totem", // translation key
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_R,       // default key
-                "Totem Utils"       // category in controls menu
+                GLFW.GLFW_KEY_R,
+                keybindCat
         ));
 
         configScreenKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "Config screen", // translation key
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,       // default key
-                "Totem Utils"       // category in controls menu
+                keybindCat       // category in controls menu
         ));
 
         // Register client tick listener
@@ -89,8 +93,8 @@ public class TotemUtilsClient implements ClientModInitializer {
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
-            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key, scancode, modifiers) -> {
-                if (swapTotemKey.matchesKey(key, scancode)) {
+            ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key) -> {
+                if (swapTotemKey.matchesKey(key)) {
                     System.out.println("pressed totem key in inv");
                     moveMouseToTotem = true;
                 }
