@@ -1,6 +1,5 @@
 {
-  "Totem Utils": "Totem Utils",
-  "Config screen": "Config screen",
-  "Swap totem": "Swap Totem",
-  "Swap shield": "Swap shield"
+  "category.totemutils.general": "Totem Utils",
+  "screen.totemutils.config": "Config Screen",
+  "key.totemutils.swap_totem": "Swap Totem"
 }

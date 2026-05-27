@@ -56,22 +56,22 @@ public class TotemUtilsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        KeyBinding.Category keybindCat = KeyBinding.Category.create(Identifier.of("Totem Utils"));
+        KeyBinding.Category keybindCat = KeyBinding.Category.create(Identifier.of("totem_utils", "keys"));
 
         load();
         // Register the keybinding
         swapTotemKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "Swap Totem", // translation key
+                "key.totemutils.swap_totem", // Matches the JSON key
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_R,
                 keybindCat
         ));
 
         configScreenKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "Config screen", // translation key
+                "key.totemutils.config_screen", // Matches the JSON key
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_H,       // default key
-                keybindCat       // category in controls menu
+                GLFW.GLFW_KEY_H,
+                keybindCat
         ));
 
         // Register client tick listener
