@@ -2,11 +2,11 @@ package CCPCT.TotemUtils.util;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -33,27 +33,27 @@ public class PacketHandler implements ClientModInitializer {
     }
 
     private static void sendPacket(Packet packet) {
-        ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        MultiPlayerGameMode interactionManager = Minecraft.getInstance().gameMode;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null || interactionManager == null) return;
-        interactionManager.clickSlot(player.currentScreenHandler.syncId, packet.slot, packet.button, packet.type, player);
+        interactionManager.handleContainerInput(player.containerMenu.containerId, packet.slot, packet.button, packet.type, player);
     }
 
     public static boolean isQueueEmpty(){
         return packetsToSend.isEmpty();
     }
 
-    public record Packet(int slot, int button, SlotActionType type) {
+    public record Packet(int slot, int button, ContainerInput type) {
         // Helper constructor for a standard slot click
-        public static void click(int slot, int button, SlotActionType type) {
+        public static void click(int slot, int button, ContainerInput type) {
             packetsToSend.add(new Packet(slot, button, type));
         }
 
-        public static void clickNow(int slot, int button, SlotActionType type) {
-            ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
-            ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        public static void clickNow(int slot, int button, ContainerInput type) {
+            MultiPlayerGameMode interactionManager = Minecraft.getInstance().gameMode;
+            LocalPlayer player = Minecraft.getInstance().player;
             if (player == null) return;
-            interactionManager.clickSlot(player.currentScreenHandler.syncId, slot, button, type, player);
+            interactionManager.handleContainerInput(player.containerMenu.containerId, slot, button, type, player);
         }
 
         // update
@@ -64,25 +64,25 @@ public class PacketHandler implements ClientModInitializer {
 
     public static void clickItem(int slot, ItemStack holding, boolean delay) {
         if (delay) {
-            Packet.click(slot, 0, SlotActionType.PICKUP);
+            Packet.click(slot, 0, ContainerInput.PICKUP);
         } else {
-            Packet.clickNow(slot, 0, SlotActionType.PICKUP);
+            Packet.clickNow(slot, 0, ContainerInput.PICKUP);
         }
     }
 
     public static void doubleClickItem(int slot, ItemStack holding, boolean delay) {
         if (delay) {
-            Packet.click(slot, 0, SlotActionType.PICKUP_ALL);
+            Packet.click(slot, 0, ContainerInput.PICKUP_ALL);
         } else {
-            Packet.clickNow(slot, 0, SlotActionType.PICKUP_ALL);
+            Packet.clickNow(slot, 0, ContainerInput.PICKUP_ALL);
         }
     }
 
     public static void swapItem(int slot, int to, boolean delay) {
         if (delay) {
-            Packet.click(slot, to, SlotActionType.SWAP);
+            Packet.click(slot, to, ContainerInput.SWAP);
         } else {
-            Packet.clickNow(slot, to, SlotActionType.SWAP);
+            Packet.clickNow(slot, to, ContainerInput.SWAP);
         }
     }
 }

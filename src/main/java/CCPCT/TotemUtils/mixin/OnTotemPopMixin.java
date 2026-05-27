@@ -4,12 +4,11 @@ import CCPCT.TotemUtils.client.TotemUtilsClient;
 import CCPCT.TotemUtils.config.ModConfig;
 import CCPCT.TotemUtils.util.Chat;
 import CCPCT.TotemUtils.util.Logic;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.Window;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -60,14 +59,14 @@ public class OnTotemPopMixin {
 
     }
 
-    @Inject(at = @At("TAIL"), method = "showFloatingItem")
+    @Inject(at = @At("TAIL"), method = "displayItemActivation")
     private void onTotemPop(ItemStack floatingItem, CallbackInfo ci) {
-        if (!floatingItem.isOf(Items.TOTEM_OF_UNDYING))
+        if (!floatingItem.is(Items.TOTEM_OF_UNDYING))
             return;
 
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
-        PlayerEntity player = client.player;
+        LocalPlayer player = client.player;
         if (player == null)
             return;
 
@@ -82,7 +81,7 @@ public class OnTotemPopMixin {
 
         // store last popped slot
         if (ModConfig.get().smartReplanishHotbar && (Logic.getMainhandStack().isEmpty()||Logic.getMainhandStack().getItem()==Items.TOTEM_OF_UNDYING)) {
-            int slot = ((PlayerInventoryMixin)player.getInventory()).getSelectedSlot();
+            int slot = player.getInventory().getSelectedSlot();
             if (ModConfig.get().smartReplanishslot==-1 || ModConfig.get().smartReplanishslot==slot) {
                 Logic.smartTotemSlot = slot;
             }
