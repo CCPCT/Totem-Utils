@@ -25,7 +25,6 @@ public class ModConfig {
 
     public boolean totemPopScreen = true;
     public int totemPopScreenColour = 0xFF0000;
-    public int totemPopScreenAlpha = 255;
     public int totemPopScreenDuration = 20;
     public int totemPopScreenWidth = 100;
 
@@ -33,7 +32,6 @@ public class ModConfig {
     public int totemCountx = 10;
     public int totemCounty = 10;
     public int totemCountColour = 0xFFFFFF;
-    public int totemCountAlpha = 255;
 
 
 
@@ -66,7 +64,6 @@ public class ModConfig {
     }
 
     public static void save() {
-        TotemUtilsClient.updateRenderCache();
         try {
             Files.writeString(CONFIG_PATH, GSON.toJson(get()));
         } catch (IOException e) {

@@ -26,6 +26,7 @@ public class configScreen extends Screen {
         ConfigCategory soundTab = builder.getOrCreateCategory(Component.literal("Sound"));
         ConfigCategory screenTab = builder.getOrCreateCategory(Component.literal("Screen"));
         ConfigCategory countTab = builder.getOrCreateCategory(Component.literal("Totem Counter"));
+        ConfigCategory hotkeyTab = builder.getOrCreateCategory(Component.literal("Hotkey"));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
@@ -46,19 +47,6 @@ public class configScreen extends Screen {
                 .setTooltip(Component.literal("how long to wait before autototeming, in ticks"))
                 .setDefaultValue(0)
                 .setSaveConsumer(newValue -> ModConfig.get().autoTotemDelay = newValue)
-                .build());
-
-        generalTab.addEntry(entryBuilder.startStrField(Component.literal("Replenish totem hotkey"), TotemUtilsClient.swapTotemKey.getTranslatedKeyMessage().getString())
-                .setTooltip(Component.literal("Recommended to modify this option in the option menu"))
-                .setDefaultValue("F")
-                .setSaveConsumer(newValue -> {
-                    try {
-                        String keyIdentifier = "key.keyboard." + newValue.toLowerCase();
-                        TotemUtilsClient.swapTotemKey.setKey(InputConstants.getKey(keyIdentifier));
-                    } catch (Exception e) {
-                        TotemUtilsClient.swapTotemKey.setKey(InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_F));
-                    }
-                })
                 .build());
 
         generalTab.addEntry(entryBuilder.startBooleanToggle(Component.literal("Replenish main hand totem"),ModConfig.get().replenishMainHandTotem)
@@ -92,20 +80,6 @@ public class configScreen extends Screen {
                 .setSaveConsumer(newValue -> ModConfig.get().smartReplanishslot = newValue)
                 .build());
 
-        generalTab.addEntry(entryBuilder.startStrField(Component.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getTranslatedKeyMessage().getString())
-                .setTooltip(Component.literal("Recommended to modify this option in the option menu"))
-                .setDefaultValue("H")
-                .setSaveConsumer(newValue -> {
-                    try {
-                        String keyIdentifier = "key.keyboard." + newValue.toLowerCase();
-                        TotemUtilsClient.configScreenKey.setKey(InputConstants.getKey(keyIdentifier));
-                    } catch (Exception e) {
-                        TotemUtilsClient.configScreenKey.setKey(InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_H));
-                    }
-                })
-                .build());
-
-
         // Custom Sound toggle
         soundTab.addEntry(entryBuilder.startBooleanToggle(Component.literal("Enable Custom Sound"),ModConfig.get().customSound)
                 .setDefaultValue(true)
@@ -136,16 +110,10 @@ public class configScreen extends Screen {
 
         screenTab.addEntry(builder.entryBuilder()
                 .startColorField(Component.literal("Color"), ModConfig.get().totemPopScreenColour)
-                .setDefaultValue(0xFFFF00)
+                .setAlphaMode(true)
+                .setDefaultValue(0x67FFFF00)
                 .setTooltip(Component.literal("Colour of overlay effect"))
                 .setSaveConsumer(newValue -> ModConfig.get().totemPopScreenColour = newValue)
-                .build());
-
-        screenTab.addEntry(entryBuilder.startIntField(Component.literal("Alpha"), ModConfig.get().totemPopScreenAlpha)
-                .setTooltip(Component.literal("Alpha (non-transparency/Opacity) of overlay"))
-                .setDefaultValue(255)
-                .setMin(0).setMax(255)
-                .setSaveConsumer(newValue -> ModConfig.get().totemPopScreenAlpha = newValue)
                 .build());
 
         screenTab.addEntry(entryBuilder.startIntField(Component.literal("Duration"), ModConfig.get().totemPopScreenDuration)
@@ -168,29 +136,35 @@ public class configScreen extends Screen {
                 .build());
 
         countTab.addEntry(builder.entryBuilder()
-                .startColorField(Component.literal("Component Color"), ModConfig.get().totemCountColour)
-                .setDefaultValue(0x000000)
-                .setTooltip(Component.literal("Colour of totem count Component"))
+                .startColorField(Component.literal("Text Colour"), ModConfig.get().totemCountColour)
+                .setAlphaMode(true)
+                .setDefaultValue(0xFF000000)
+                .setTooltip(Component.literal("Colour of totem count Text"))
                 .setSaveConsumer(newValue -> ModConfig.get().totemCountColour = newValue)
                 .build());
 
-        countTab.addEntry(entryBuilder.startIntField(Component.literal("Alpha"), ModConfig.get().totemCountAlpha)
-                .setTooltip(Component.literal("Alpha (non-transparency/Opacity) of totem count Component"))
-                .setDefaultValue(255)
-                .setMin(0).setMax(255)
-                .setSaveConsumer(newValue -> ModConfig.get().totemCountAlpha = newValue)
-                .build());
-
         countTab.addEntry(entryBuilder.startIntField(Component.literal("X position"), ModConfig.get().totemCountx)
-                .setTooltip(Component.literal("how many pixels from left of screen to start of Component"))
+                .setTooltip(Component.literal("how many pixels from left of screen to start of Text"))
                 .setDefaultValue(10)
                 .setSaveConsumer(newValue -> ModConfig.get().totemCountx = newValue)
                 .build());
 
         countTab.addEntry(entryBuilder.startIntField(Component.literal("Y position"), ModConfig.get().totemCounty)
-                .setTooltip(Component.literal("how many pixels from top of screen to start of Component"))
+                .setTooltip(Component.literal("how many pixels from top of screen to start of Text"))
                 .setDefaultValue(10)
                 .setSaveConsumer(newValue -> ModConfig.get().totemCounty = newValue)
+                .build());
+
+        hotkeyTab.addEntry(entryBuilder.startStrField(Component.literal("Replenish totem hotkey"), TotemUtilsClient.swapTotemKey.getTranslatedKeyMessage().getString())
+                .setTooltip(Component.literal("modify this option in the option menu"))
+                .setDefaultValue("F")
+                .setSaveConsumer(a -> {})
+                .build());
+
+        hotkeyTab.addEntry(entryBuilder.startStrField(Component.literal("Open config hotkey"), TotemUtilsClient.configScreenKey.getTranslatedKeyMessage().getString())
+                .setTooltip(Component.literal("modify this option in the option menu"))
+                .setDefaultValue("H")
+                .setSaveConsumer(_ -> {})
                 .build());
 
         return builder.build();
