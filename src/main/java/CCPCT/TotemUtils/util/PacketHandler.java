@@ -52,7 +52,7 @@ public class PacketHandler implements ClientModInitializer {
         public static void clickNow(int slot, int button, ContainerInput type) {
             MultiPlayerGameMode interactionManager = Minecraft.getInstance().gameMode;
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player == null) return;
+            if (player == null || interactionManager == null) return;
             interactionManager.handleContainerInput(player.containerMenu.containerId, slot, button, type, player);
         }
 
