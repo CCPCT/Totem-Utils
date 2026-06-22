@@ -70,7 +70,7 @@ public class TotemUtilsClient implements ClientModInitializer {
 
             if (configScreenKey.isDown()) {
                 // open config, dont need extra logic as this only run in world...
-                client.setScreen(configScreen.getConfigScreen(client.screen));
+                client.gui.setScreen(configScreen.getConfigScreen(client.gui.screen()));
             }
 
             if (client.player == null || client.player.isCreative() || client.player.isSpectator() || !client.player.isAlive()) {
