@@ -18,7 +18,6 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 import static CCPCT.TotemUtils.config.ModConfig.load;
 
@@ -28,11 +27,14 @@ public class TotemUtilsClient implements ClientModInitializer {
     public static final String MODID = "totemutils";
 
     // mixin var
-    public static boolean moveMouseToTotem = false;
     public static boolean popped = false;
     int totemCount = 0;
 
     boolean totemKeyWasDown = false;
+
+    public static int overlaytickleft = 0;
+    public static int counttickleft = 0;
+    public static int autoTotemDelay = -1;
 
     @Override
     public void onInitializeClient() {
@@ -41,15 +43,15 @@ public class TotemUtilsClient implements ClientModInitializer {
         // Register the KeyMapping
         swapTotemKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.totemutils.swap_totem", // Matches the JSON key
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_R,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_R,
                 keybindCat
         ));
 
         configScreenKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.totemutils.config_screen", // Matches the JSON key
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_H,
+                InputConstants.Type.KEYBOARD,
+                InputConstants.KEY_H,
                 keybindCat
         ));
 
@@ -80,14 +82,45 @@ public class TotemUtilsClient implements ClientModInitializer {
             if (Logic.totemCountActive) {
                 totemCount = Logic.getTotemCount(true);
             }
+
+            //imp
+            if (Logic.overlayactive){
+                if (overlaytickleft <= 0 || (Logic.totemOnOffhand() && 5<=ModConfig.get().totemPopScreenDuration*20-overlaytickleft)){
+                    Logic.overlayactive = false;
+                } else {
+                    overlaytickleft--;
+                }
+            } else {
+                overlaytickleft = 0;
+            }
+
+            if (ModConfig.get().totemCountTime<0){
+                Logic.totemCountActive = true;
+                Logic.totemCountValue = Logic.getTotemCount(false);
+            } else if (Logic.totemCountActive){
+                if (counttickleft <= 0){
+                    Logic.totemCountActive = false;
+                } else {
+                    counttickleft--;
+                }
+            }
+
+            // auto totem trigger
+            if (autoTotemDelay == 0 && ModConfig.get().autoTotem) {
+                Logic.refillTotem();
+            }
+            if (autoTotemDelay>=0){
+                autoTotemDelay--;
+            }
+
+
         });
 
         ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
             ScreenKeyboardEvents.afterKeyPress(screen).register((scr, key) -> {
                 if (client.level == null) return;
                 if (swapTotemKey.matches(key)) {
-                    System.out.println("pressed totem key in inv");
-                    moveMouseToTotem = true;
+                    Logic.refillTotem();
                 }
             });
         });

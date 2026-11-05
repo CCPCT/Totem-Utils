@@ -24,9 +24,7 @@ public class Logic {
         PacketHandler.clearPackets();
         overlayactive = false;
         smartTotemSlot = -1;
-        TotemUtilsClient.moveMouseToTotem = false;
         TotemUtilsClient.popped = false;
-
     }
 
     public static void refillTotem() {
@@ -92,7 +90,7 @@ public class Logic {
     public static boolean totemOnOffhand(){
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return false;
-        return player.containerMenu.getSlot(45).getItem().getItem() == Items.TOTEM_OF_UNDYING;
+        return player.getOffhandItem().getItem() == Items.TOTEM_OF_UNDYING;
     }
 
     public static int getTotemCount(boolean refresh) {
@@ -140,8 +138,24 @@ public class Logic {
     public static int getSlotWithItemInHotbar(Item item, int ignoring){
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return -1;
-        for (int i = 0; i < 9; i++) {
-            ItemStack stack = player.containerMenu.getSlot(i).getItem();
+        for (int i = 36; i <= 44; i++) {
+            ItemStack stack = player.inventoryMenu.getSlot(i).getItem();
+            if (!stack.isEmpty() && stack.getItem() == item) {
+                if (ignoring > 0){
+                    ignoring--;
+                } else {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static int getSlotWithItemInInventory(Item item, int ignoring){
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return -1;
+        for (int i = 9; i <= 35; i++) {
+            ItemStack stack = player.inventoryMenu.getSlot(i).getItem();
             if (!stack.isEmpty() && stack.getItem() == item) {
                 if (ignoring > 0){
                     ignoring--;

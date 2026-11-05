@@ -8,7 +8,7 @@ repositories {
 }
 
 // 1. Determine which version we are targeting (default to 1.21.2)
-def target = project.hasProperty('target') ? project.property('target') : '26.2'
+def target = project.hasProperty('target') ? project.property('target') : '26.3'
 
 // 2. Point to the file in the 'versions' folder
 def propsFile = file("versions/${target}.properties")
@@ -25,7 +25,7 @@ if (propsFile.exists()) {
     throw new GradleException("Could not find version config: ${propsFile}")
 }
 
-version = "${project.projectVersion}"
+version = "${minecraft_version}-${project.projectVersion.substring(project.projectVersion.indexOf('-') + 1)}"
 
 processResources {
     inputs.property "version", project.version
@@ -58,11 +58,7 @@ jar {
 loom {
     runs {
         client {
-            client()
-            name "Minecraft Client"
-            runDir "run"
-
-            // Sets your player name exactly to "Dev"
+            programArgs "--quickPlaySingleplayer", "26.3"
             programArgs "--username", "Dev"
         }
     }

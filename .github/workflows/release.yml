@@ -8,7 +8,7 @@ on:
       tag_name:
         description: 'Tag for the release'
         required: true
-        default: 'v2.'
+        default: 'v'
 
 jobs:
   build:
@@ -16,13 +16,13 @@ jobs:
     strategy:
       matrix:
         # Define your versions here
-        mc_version: ["26.2"]
+        mc_version: ["26.3"]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
 
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: '25'
           distribution: 'temurin'
